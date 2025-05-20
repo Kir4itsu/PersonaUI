@@ -12,7 +12,7 @@ export default function PersonaCampusUI() {
 
   // Dummy user data
   const userData = {
-    name: "Alex Wijaya",
+    name: "Kiraitsu Mochizuki",
     level: 17,
     type: "The Creative One",
     xp: 2570,
