@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Persona - Quest</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            color: #2d3436;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 390px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(116, 75, 162, 0.1);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: #ffffff;
+            border-radius: 24px 24px 0 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2d3436;
+        }
+
+        .section-title svg {
+            width: 20px;
+            height: 20px;
+            color: #764ba2;
+        }
+
+        .quest-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(116, 75, 162, 0.08);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .quest-card:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(116, 75, 162, 0.15);
+            border-color: #764ba2;
+        }
+
+        .quest-card.completed {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            color: white;
+            border-color: #00b894;
+        }
+
+        .quest-card.daily {
+            border-left: 4px solid #4ecdc4;
+        }
+
+        .quest-card.weekly {
+            border-left: 4px solid #ffd700;
+        }
+
+        .quest-card.special {
+            border-left: 4px solid #ff6b6b;
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(238, 90, 82, 0.1) 100%);
+        }
+
+        .quest-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .quest-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quest-reward {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .quest-description {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 12px;
+        }
+
+        .quest-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .progress-text {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(116, 75, 162, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
+            border-radius: 3px;
+            transition: width 1s ease;
+        }
+
+        .quest-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .quest-btn {
+            padding: 8px 16px;
+            border-radius: 12px;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quest-btn.primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .quest-btn.secondary {
+            background: #e9ecef;
+            color: #636e72;
+        }
+
+        .quest-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(116, 75, 162, 0.2);
+        }
+
+        .quest-type-badge {
+            background: #764ba2;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .quest-type-badge.daily { background: #4ecdc4; }
+        .quest-type-badge.weekly { background: #ffd700; color: #2d3436; }
+        .quest-type-badge.special { background: #ff6b6b; }
+
+        .daily-missions {
+            margin: 20px;
+        }
+
+        .weekly-quests {
+            margin: 20px;
+        }
+
+        .special-events {
+            margin: 20px;
+        }
+
+        .event-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .event-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .event-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .event-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .event-time {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 390px;
+            background: #ffffff;
+            border-radius: 24px 24px 0 0;
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            box-shadow: 0 -5px 20px rgba(116, 75, 162, 0.1);
+            padding: 16px;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(116, 75, 162, 0.1);
+            transform: translateY(-2px);
+            color: #764ba2;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        .nav-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 25px rgba(116, 75, 162, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(116, 75, 162, 0.4);
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 12px;
+            height: 12px;
+            background: #ff4757;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="color: #764ba2; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i data-lucide="target"></i> Quest Board
+            </h1>
+            <p style="opacity: 0.7; font-size: 14px; margin-top: 4px; color: #636e72;">Complete quests to level up!</p>
+        </div>
+
+        <div class="daily-missions">
+            <div class="section-title">
+                <i data-lucide="calendar-check"></i> Daily Missions
+            </div>
+            
+            <div class="quest-card daily completed">
+                <div class="quest-header">
+                    <div class="quest-title">
+                        <i data-lucide="check-circle" style="width: 16px; height: 16px; color: white;"></i>
+                        Attend Classes
+                    </div>
+                    <div class="quest-reward">+50 XP</div>
+                </div>
+                <div class="quest-description">Hadir ke minimal 2 kelas hari ini</div>
+                <div class="quest-progress">
+                    <span class="progress-text">2/2 Completed ✓</span>
+                </div>
+            </div>
+
+            <div class="quest-card daily completed">
+                <div class="quest-header">
+                    <div class="quest-title">
+                        <i data-lucide="check-circle" style="width: 16px; height: 16px; color: white;"></i>
+                        Help a Friend
+                    </div>
+                    <div class="quest-reward">+30 XP</div>
+                </div>
+                <div class="quest-description">Bantu teman dengan tugas atau masalah</div>
+                <div class="quest-progress">
+                    <span class="progress-text">1/1 Completed ✓</span>
+                </div>
+            </div>
+
+            <div class="quest-card daily">
+                <div class="quest-header">
+                    <div class="quest-title">
+                        <i data-lucide="users" style="width: 16px; height: 16px; color: #764ba2;"></i>
+                        Join UKM Activity
+                    </div>
+                    <div class="quest-reward">+75 XP</div>
+                </div>
+                <div class="quest-description">Ikuti kegiatan UKM apapun hari ini</div>
+                <div class="quest-progress">
+                    <span class="progress-text">0/1 In Progress</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="quest-actions">
+                    <button class="quest-btn primary">Find UKM</button>
+                    <button class="quest-btn secondary">Skip Quest</button>
+                </div>
+            </div>
+
+            <div class="quest-card daily">
+                <div class="quest-header">
+                    <div class="quest-title">
+                        <i data-lucide="qr-code" style="width: 16px; height: 16px; color: #764ba2;"></i>
+                        Scan QR Codes
+                    </div>
+                    <div class="quest-reward">+25 XP</div>
+                </div>
+                <div class="quest-description">Scan 3 QR code dari berbagai tempat di kampus</div>
+                <div class="quest-progress">
+                    <span class="progress-text">2/3 Almost Done!</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 67%"></div>
+                </div>
+                <div class="quest-actions">
+                    <button class="quest-btn primary">Open Scanner</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="weekly-quests">
+            <div class="section-title">
+                <i data-lucide="calendar-days"></i> Weekly Challenges
+            </div>
+            
+            <div class="quest-card weekly">
+                <div class="quest-header">
+                    <div class="quest-title">
+                        <i data-lucide="trophy" style="width: 16px; height: 16px; color: #764ba2;"></i>
+                        Study Streak Master
+                        <span class="quest-type-badge weekly">Weekly</span>
+                    </div>
+                    <div class="quest-reward">+200 XP</div>
+                </div>
+                <div class="quest-description">Belajar minimal 2 jam setiap hari selama seminggu</div>
+                <div class="quest-progress">
+                    <span class="progress-text">5/7 Days</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 71%"></div>
+                </div>
+                <div class="quest-actions">
+                    <button class="quest-btn primary">Log Study Time</button>
+                </div>
+            </div>
+
+            <div class="quest-card weekly">
+                <div class="quest-header">
+                    <div class="quest-title">
+                        <i data-lucide="handshake" style="width: 16px; height: 16px; color: #764ba2;"></i>
+                        Social Butterfly
+                        <span class="quest-type-badge weekly">Weekly</span>
+                    </div>
+                    <div class="quest-reward">+150 XP</div>
+                </div>
+                <div class="quest-description">Bertemu dan ngobrol dengan 10 orang baru minggu ini</div>
+                <div class="quest-progress">
+                    <span class="progress-text">7/10 People</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 70%"></div>
+                </div>
+                <div class="quest-actions">
+                    <button class="quest-btn primary">Find Events</button>
+                </div>
+            </div>
+
+            <div class="quest-card weekly">
+                <div class="quest-header">
+                    <div class="quest-title">
+                        <i data-lucide="lightbulb" style="width: 16px; height: 16px; color: #764ba2;"></i>
+                        Innovation Lab
+                        <span class="quest-type-badge weekly">Weekly</span>
+                    </div>
+                    <div class="quest-reward">+300 XP</div>
+                </div>
+                <div class="quest-description">Buat atau ikuti project kreatif/inovatif</div>
+                <div class="quest-progress">
+                    <span class="progress-text">1/1 In Progress</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 45%"></div>
+                </div>
+                <div class="quest-actions">
+                    <button class="quest-btn primary">Join Project</button>
+                    <button class="quest-btn secondary">Create New</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="special-events">
+            <div class="section-title">
+                <i data-lucide="star"></i> Special Events
+            </div>
+            
+            <div class="event-card">
+                <div class="event-content">
+                    <div class="event-title">🎨 Campus Art Festival</div>
+                    <div class="event-time">📅 Jun 10-15, 2025 • 5 days left</div>
+                    <div class="quest-description" style="color: rgba(255,255,255,0.9); margin-bottom: 16px;">
+                        Ikuti festival seni kampus dan raih achievement eksklusif!
+                    </div>
+                    <div class="quest-actions">
+                        <button class="quest-btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3);">
+                            Join Festival (+500 XP)
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quest-card special">
+                <div class="quest-header">
+                    <div class="quest-title">
+                        <i data-lucide="zap" style="width: 16px; height: 16px; color: #ff6b6b;"></i>
+                        Speed Learning Challenge
+                        <span class="quest-type-badge special">Limited</span>
+                    </div>
+                    <div class="quest-reward">+1000 XP</div>
+                </div>
+                <div class="quest-description">Selesaikan 5 online course dalam 48 jam!</div>
+                <div class="quest-progress">
+                    <span class="progress-text">2/5 Courses • 28h left</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 40%"></div>
+                </div>
+                <div class="quest-actions">
+                    <button class="quest-btn primary">Browse Courses</button>
+                    <button class="quest-btn secondary">Extend Time</button>
+                </div>
+            </div>
+
+            <div class="quest-card special">
+                <div class="quest-header">
+                    <div class="quest-title">
+                        <i data-lucide="crown" style="width: 16px; height: 16px; color: #ff6b6b;"></i>
+                        Leadership Summit
+                        <span class="quest-type-badge special">Elite</span>
+                    </div>
+                    <div class="quest-reward">+2000 XP</div>
+                </div>
+                <div class="quest-description">Organize dan lead sebuah event kampus dengan minimal 50 peserta</div>
+                <div class="quest-progress">
+                    <span class="progress-text">Planning Phase</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 15%"></div>
+                </div>
+                <div class="quest-actions">
+                    <button class="quest-btn primary">Start Planning</button>
+                    <button class="quest-btn secondary">Find Co-Leader</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="height: 120px;"></div>
+
+        <button class="floating-btn" onclick="showQuestRewards()">
+            <i data-lucide="gift"></i>
+            <div class="notification-dot"></div>
+        </button>
+
+        <div class="bottom-nav">
+            <div class="nav-items">
+                <div class="nav-item">
+                    <div class="nav-icon"><i data-lucide="home"></i></div>
+                    <div class="nav-label">Home</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon"><i data-lucide="users"></i></div>
+                    <div class="nav-label">Friends</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon"><i data-lucide="bar-chart-3"></i></div>
+                    <div class="nav-label">Stats</div>
+                </div>
+                <div class="nav-item active">
+                    <div class="nav-icon"><i data-lucide="target"></i></div>
+                    <div class="nav-label">Quest</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon"><i data-lucide="user"></i></div>
+                    <div class="nav-label">Profile</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Navigation functionality
+        document.querySelectorAll('.nav-item').forEach((item, index) => {
+            item.addEventListener('click', function () {
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                
+                const labels = ['Home', 'Friends', 'Stats', 'Quest', 'Profile'];
+                if (labels[index] !== 'Quest') {
+                    alert(`Navigating to ${labels[index]}...`);
+                }
+            });
+        });
+
+        // Quest card interactions
+        document.querySelectorAll('.quest-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                if (e.target.classList.contains('quest-btn')) return;
+                
+                const title = this.querySelector('.quest-title').textContent.trim();
+                const reward = this.querySelector('.quest-reward').textContent;
+                const isCompleted = this.classList.contains('completed');
+                
+                if (isCompleted) {
+                    alert(`✅ Quest Completed!\n\n${title}\nReward: ${reward}`);
+                } else {
+                    this.style.transform = 'scale(0.98)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                }
+            });
+        });
+
+        // Quest buttons
+        document.querySelectorAll('.quest-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const action = this.textContent;
+                
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                    
+                    switch(action) {
+                        case 'Find UKM':
+                            alert('🏛️ UKM Directory\n\nShowing nearby UKM activities:\n• Drama Club - 2pm\n• Robotics Club - 3pm\n• Music Club - 4pm');
+                            break;
+                        case 'Open Scanner':
+                            alert('📱 QR Scanner\n\nCamera activated! Point your camera at any QR code around campus to earn XP.');
+                            break;
+                        case 'Log Study Time':
+                            alert('⏰ Study Timer\n\nStarting study session tracker. Keep studying to maintain your streak!');
+                            break;
+                        case 'Find Events':
+                            alert('🎉 Campus Events\n\nUpcoming social events:\n• Welcome Party - Tonight\n• Study Group - Tomorrow\n• Movie Night - Friday');
+                            break;
+                        case 'Join Project':
+                            alert('💡 Innovation Projects\n\nAvailable projects:\n• Smart Campus App\n• Eco-Friendly Initiative\n• Student Startup Incubator');
+                            break;
+                        case 'Join Festival':
+                            alert('🎨 Art Festival Registration\n\nYou\'re now registered for Campus Art Festival! Check your calendar for event details.');
+                            break;
+                        case 'Browse Courses':
+                            alert('📚 Online Courses\n\nQuick courses available:\n• Digital Marketing (2h)\n• Data Analysis (3h)\n• Public Speaking (1.5h)');
+                            break;
+                        case 'Start Planning':
+                            alert('📋 Event Planning\n\nEvent planning toolkit activated! Start by choosing your event type and target audience.');
+                            break;
+                        default:
+                            alert(`Action: ${action}`);
+                    }
+                }, 150);
+            });
+        });
+
+        // Floating button - Quest Rewards
+        function showQuestRewards() {
+            alert('🎁 Quest Rewards Available!\n\n• 3x Daily Quest Bonus\n• 1x Weekly Challenge Boost\n• Special Event Badge\n• Leadership Skill Unlock\n\nClaim your rewards now!');
+        }
+
+        // Simulate quest completion
+        setTimeout(() => {
+            if (Math.random() > 0.6) {
+                const questNotification = document.createElement('div');
+                questNotification.innerHTML = `
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">🎯</div>
+                        <div style="font-weight: 700; margin-bottom: 4px;">QUEST COMPLETED!</div>
+                        <div style="font-size: 14px;">+75 XP earned!</div>
+                        <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">UKM Activity Quest</div>
+                    </div>
+                `;
+                questNotification.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+                    color: white;
+                    padding: 20px;
+                    border-radius: 20px;
+                    box-shadow: 0 20px 40px rgba(76, 201, 196, 0.3);
+                    z-index: 1000;
+                    animation: questCompleteAnim 1s ease-out;
+                `;
+                
+                const questStyle = document.createElement('style');
+                questStyle.textContent = `
+                    @keyframes questCompleteAnim {
+                        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(-10deg); }
+                        50% { transform: translate(-50%, -50%) scale(1.1) rotate(5deg); }
+                        100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+                    }
+                `;
+                document.head.appendChild(questStyle);
+                document.body.appendChild(questNotification);
+                
+                setTimeout(() => {
+                    questNotification.remove();
+                    questStyle.remove();
+                }, 3000);
+            }
+        }, 7000);
+
+        // Auto-update progress bars
+        setTimeout(() => {
+            document.querySelectorAll('.progress-fill').forEach(bar => {
+                const currentWidth = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = currentWidth;
+                }, 100);
+            });
+        }, 500);
+    </script>
+</body>
+</html>

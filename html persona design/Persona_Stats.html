@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Persona - Stats</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            color: #2d3436;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 390px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(116, 75, 162, 0.1);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: #ffffff;
+            border-radius: 24px 24px 0 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2d3436;
+        }
+
+        .section-title svg {
+            width: 20px;
+            height: 20px;
+            color: #764ba2;
+        }
+
+        .stats-overview {
+            margin: 20px;
+        }
+
+        .level-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .level-display::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .level-number {
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .level-title {
+            font-size: 16px;
+            font-weight: 600;
+            opacity: 0.9;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 20px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(116, 75, 162, 0.08);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(116, 75, 162, 0.15);
+            border-color: #764ba2;
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: #764ba2;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #2d3436;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1s ease;
+        }
+
+        .progress-social { background: linear-gradient(90deg, #4ecdc4, #44a08d); width: 85%; }
+        .progress-academic { background: linear-gradient(90deg, #667eea, #764ba2); width: 92%; }
+        .progress-leadership { background: linear-gradient(90deg, #ffd700, #ffed4e); width: 78%; }
+        .progress-creative { background: linear-gradient(90deg, #ff6b6b, #ee5a52); width: 96%; }
+
+        .achievements-section {
+            margin: 20px;
+        }
+
+        .achievement-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .achievement-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(116, 75, 162, 0.06);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .achievement-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(116, 75, 162, 0.15);
+        }
+
+        .achievement-card.unlocked {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .achievement-card.locked {
+            opacity: 0.5;
+            filter: grayscale(100%);
+        }
+
+        .achievement-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .achievement-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .achievement-desc {
+            font-size: 10px;
+            opacity: 0.8;
+        }
+
+        .weekly-progress {
+            margin: 20px;
+        }
+
+        .week-item {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 10px rgba(116, 75, 162, 0.06);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+        }
+
+        .week-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .week-day {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .week-xp {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .activity-dots {
+            display: flex;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .activity-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e9ecef;
+        }
+
+        .activity-dot.completed {
+            background: #00b894;
+        }
+
+        .activity-dot.partial {
+            background: #fdcb6e;
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 25px rgba(116, 75, 162, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(116, 75, 162, 0.4);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 390px;
+            background: #ffffff;
+            border-radius: 24px 24px 0 0;
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            box-shadow: 0 -5px 20px rgba(116, 75, 162, 0.1);
+            padding: 16px;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(116, 75, 162, 0.1);
+            transform: translateY(-2px);
+            color: #764ba2;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        .nav-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .ranking-section {
+            margin: 20px;
+        }
+
+        .rank-item {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 10px rgba(116, 75, 162, 0.06);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .rank-number {
+            background: #764ba2;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 14px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .rank-number.gold { background: #ffd700; color: #2d3436; }
+        .rank-number.silver { background: #c0c0c0; color: #2d3436; }
+        .rank-number.bronze { background: #cd7f32; color: white; }
+
+        .rank-info {
+            flex: 1;
+        }
+
+        .rank-name {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .rank-level {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .rank-xp {
+            color: #764ba2;
+            font-weight: 600;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="color: #764ba2; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i data-lucide="bar-chart-3"></i> Persona Statistics
+            </h1>
+            <p style="opacity: 0.7; font-size: 14px; margin-top: 4px; color: #636e72;">Track your campus journey</p>
+        </div>
+
+        <div class="stats-overview">
+            <div class="level-display">
+                <div class="level-number">15</div>
+                <div class="level-title">The Creative Leader</div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i data-lucide="users"></i></div>
+                <div class="stat-value">85</div>
+                <div class="stat-label">Social</div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-social"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-lucide="brain"></i></div>
+                <div class="stat-value">92</div>
+                <div class="stat-label">Academic</div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-academic"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-lucide="crown"></i></div>
+                <div class="stat-value">78</div>
+                <div class="stat-label">Leadership</div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-leadership"></div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-lucide="palette"></i></div>
+                <div class="stat-value">96</div>
+                <div class="stat-label">Creative</div>
+                <div class="progress-bar">
+                    <div class="progress-fill progress-creative"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="achievements-section">
+            <div class="section-title">
+                <i data-lucide="trophy"></i> Achievements
+            </div>
+            <div class="achievement-grid">
+                <div class="achievement-card unlocked">
+                    <div class="achievement-icon">🎓</div>
+                    <div class="achievement-title">Scholar</div>
+                    <div class="achievement-desc">Complete 10 courses</div>
+                </div>
+                <div class="achievement-card unlocked">
+                    <div class="achievement-icon">👥</div>
+                    <div class="achievement-title">Socializer</div>
+                    <div class="achievement-desc">Meet 25 friends</div>
+                </div>
+                <div class="achievement-card unlocked">
+                    <div class="achievement-icon">🎨</div>
+                    <div class="achievement-title">Artist</div>
+                    <div class="achievement-desc">Join creative events</div>
+                </div>
+                <div class="achievement-card unlocked">
+                    <div class="achievement-icon">⚡</div>
+                    <div class="achievement-title">Speedster</div>
+                    <div class="achievement-desc">Complete tasks fast</div>
+                </div>
+                <div class="achievement-card locked">
+                    <div class="achievement-icon">👑</div>
+                    <div class="achievement-title">Leader</div>
+                    <div class="achievement-desc">Lead 5 projects</div>
+                </div>
+                <div class="achievement-card locked">
+                    <div class="achievement-icon">🔥</div>
+                    <div class="achievement-title">Streaker</div>
+                    <div class="achievement-desc">30 day streak</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="weekly-progress">
+            <div class="section-title">
+                <i data-lucide="calendar-days"></i> Weekly Progress
+            </div>
+            <div class="week-item">
+                <div class="week-header">
+                    <div class="week-day">Monday</div>
+                    <div class="week-xp">+420 XP</div>
+                </div>
+                <div class="activity-dots">
+                    <div class="activity-dot completed"></div>
+                    <div class="activity-dot completed"></div>
+                    <div class="activity-dot completed"></div>
+                    <div class="activity-dot partial"></div>
+                </div>
+            </div>
+            <div class="week-item">
+                <div class="week-header">
+                    <div class="week-day">Tuesday</div>
+                    <div class="week-xp">+380 XP</div>
+                </div>
+                <div class="activity-dots">
+                    <div class="activity-dot completed"></div>
+                    <div class="activity-dot completed"></div>
+                    <div class="activity-dot completed"></div>
+                    <div class="activity-dot"></div>
+                </div>
+            </div>
+            <div class="week-item">
+                <div class="week-header">
+                    <div class="week-day">Wednesday</div>
+                    <div class="week-xp">+350 XP</div>
+                </div>
+                <div class="activity-dots">
+                    <div class="activity-dot completed"></div>
+                    <div class="activity-dot completed"></div>
+                    <div class="activity-dot partial"></div>
+                    <div class="activity-dot"></div>
+                </div>
+            </div>
+            <div class="week-item">
+                <div class="week-header">
+                    <div class="week-day">Today</div>
+                    <div class="week-xp">+550 XP</div>
+                </div>
+                <div class="activity-dots">
+                    <div class="activity-dot completed"></div>
+                    <div class="activity-dot completed"></div>
+                    <div class="activity-dot completed"></div>
+                    <div class="activity-dot completed"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ranking-section">
+            <div class="section-title">
+                <i data-lucide="medal"></i> Campus Ranking
+            </div>
+            <div class="rank-item">
+                <div class="rank-number gold">1</div>
+                <div class="rank-info">
+                    <div class="rank-name">Sari Dewi</div>
+                    <div class="rank-level">Level 18 • The Academic</div>
+                </div>
+                <div class="rank-xp">4,250 XP</div>
+            </div>
+            <div class="rank-item">
+                <div class="rank-number silver">2</div>
+                <div class="rank-info">
+                    <div class="rank-name">Kiraitsu M. (You)</div>
+                    <div class="rank-level">Level 15 • The Creative Leader</div>
+                </div>
+                <div class="rank-xp">2,450 XP</div>
+            </div>
+            <div class="rank-item">
+                <div class="rank-number bronze">3</div>
+                <div class="rank-info">
+                    <div class="rank-name">Rio Saputra</div>
+                    <div class="rank-level">Level 14 • The Innovator</div>
+                </div>
+                <div class="rank-xp">2,100 XP</div>
+            </div>
+            <div class="rank-item">
+                <div class="rank-number">4</div>
+                <div class="rank-info">
+                    <div class="rank-name">Andi Pratama</div>
+                    <div class="rank-level">Level 12 • The Strategist</div>
+                </div>
+                <div class="rank-xp">1,850 XP</div>
+            </div>
+        </div>
+
+        <div style="height: 120px;"></div>
+
+        <button class="floating-btn" onclick="showStats()">
+            <i data-lucide="trending-up"></i>
+        </button>
+
+        <div class="bottom-nav">
+            <div class="nav-items">
+                <div class="nav-item">
+                    <div class="nav-icon"><i data-lucide="home"></i></div>
+                    <div class="nav-label">Home</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon"><i data-lucide="users"></i></div>
+                    <div class="nav-label">Friends</div>
+                </div>
+                <div class="nav-item active">
+                    <div class="nav-icon"><i data-lucide="bar-chart-3"></i></div>
+                    <div class="nav-label">Stats</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon"><i data-lucide="target"></i></div>
+                    <div class="nav-label">Quest</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon"><i data-lucide="user"></i></div>
+                    <div class="nav-label">Profile</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Navigation functionality
+        document.querySelectorAll('.nav-item').forEach((item, index) => {
+            item.addEventListener('click', function () {
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Simulate navigation
+                const labels = ['Home', 'Friends', 'Stats', 'Quest', 'Profile'];
+                if (labels[index] !== 'Stats') {
+                    alert(`Navigating to ${labels[index]}...`);
+                }
+            });
+        });
+
+        // Stats floating button
+        function showStats() {
+            alert('📊 Detailed Analytics\n\nTotal XP: 2,450\nWeek Streak: 7 days\nTotal Activities: 47\nFriends Made: 15');
+        }
+
+        // Achievement hover effects
+        document.querySelectorAll('.achievement-card').forEach(card => {
+            card.addEventListener('click', function() {
+                if (this.classList.contains('unlocked')) {
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                } else {
+                    alert('🔒 Achievement locked!\n\nComplete more activities to unlock this achievement.');
+                }
+            });
+        });
+
+        // Animate progress bars on load
+        setTimeout(() => {
+            document.querySelectorAll('.progress-fill').forEach(bar => {
+                bar.style.width = bar.style.width || '0%';
+            });
+        }, 500);
+
+        // Stat card hover effects
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const label = this.querySelector('.stat-label').textContent;
+                const value = this.querySelector('.stat-value').textContent;
+                
+                let message = '';
+                switch(label) {
+                    case 'Social':
+                        message = '👥 Social Skills\n\nFriends: 15\nEvents Attended: 23\nTeam Projects: 8';
+                        break;
+                    case 'Academic':
+                        message = '🎓 Academic Progress\n\nCourses Completed: 12\nGPA: 3.8\nAssignments: 45/50';
+                        break;
+                    case 'Leadership':
+                        message = '👑 Leadership Experience\n\nProjects Led: 3\nTeam Members: 12\nEvents Organized: 5';
+                        break;
+                    case 'Creative':
+                        message = '🎨 Creative Projects\n\nDesigns Created: 28\nContests Won: 4\nCollaborations: 9';
+                        break;
+                }
+                alert(message);
+            });
+        });
+
+        // Weekly progress interaction
+        document.querySelectorAll('.week-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const day = this.querySelector('.week-day').textContent;
+                const xp = this.querySelector('.week-xp').textContent;
+                const completed = this.querySelectorAll('.activity-dot.completed').length;
+                const partial = this.querySelectorAll('.activity-dot.partial').length;
+                
+                alert(`📅 ${day} Summary\n\n${xp} earned\n✅ ${completed} tasks completed\n🔶 ${partial} tasks in progress`);
+            });
+        });
+    </script>
+</body>
+</html>
