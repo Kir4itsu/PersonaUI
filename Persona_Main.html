@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Persona</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            color: #2d3436;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 390px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(116, 75, 162, 0.1);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: #ffffff;
+            border-radius: 24px 24px 0 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 24px;
+            margin: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(116, 75, 162, 0.2);
+            color: white;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .avatar-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .player-info h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .player-type {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .level-section {
+            position: relative;
+            z-index: 2;
+        }
+
+        .level-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .level-number {
+            font-size: 48px;
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .xp-info {
+            text-align: right;
+        }
+
+        .xp-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .xp-fill {
+            width: 68%;
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            border-radius: 10px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin: 20px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(116, 75, 162, 0.08);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(116, 75, 162, 0.15);
+            border-color: #764ba2;
+        }
+
+        .stat-icon {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #764ba2;
+        }
+
+        .stat-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .activities-section {
+            margin: 20px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2d3436;
+        }
+
+        .section-title svg {
+            width: 20px;
+            height: 20px;
+            color: #764ba2;
+        }
+
+        .activity-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(116, 75, 162, 0.08);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .activity-card:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(116, 75, 162, 0.15);
+            border-color: #764ba2;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .activity-time {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .activity-xp {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .activity-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .activity-location {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .daily-missions {
+            margin: 20px;
+        }
+
+        .mission-item {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(116, 75, 162, 0.06);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+        }
+
+        .mission-progress {
+            font-size: 12px;
+            color: #4ecdc4;
+            font-weight: 600;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 390px;
+            background: #ffffff;
+            border-radius: 24px 24px 0 0;
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            box-shadow: 0 -5px 20px rgba(116, 75, 162, 0.1);
+            padding: 16px;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(116, 75, 162, 0.1);
+            transform: translateY(-2px);
+            color: #764ba2;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        .nav-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .floating-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 25px rgba(116, 75, 162, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(116, 75, 162, 0.4);
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 12px;
+            height: 12px;
+            background: #ff4757;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .social-skills {
+            margin: 20px;
+        }
+
+        .skill-item {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 10px rgba(116, 75, 162, 0.06);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .skill-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .skill-level {
+            background: linear-gradient(45deg, #a55eea, #8e44ad);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="color: #764ba2; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i data-lucide="gamepad-2"></i> Campus Persona
+            </h1>
+            <p style="opacity: 0.7; font-size: 14px; margin-top: 4px; color: #636e72;">Level up your campus life!</p>
+        </div>
+
+        <!-- HOME SECTION -->
+        <div id="home-section" class="main-section" style="display: block;">
+            <div class="profile-card">
+                <div class="avatar-section">
+                    <div class="avatar">
+                        <i data-lucide="graduation-cap" style="font-size: 36px;"></i>
+                    </div>
+                <div class="player-info">
+                    <h2>Kiraitsu M.</h2>
+                    <div class="player-type">The Creative Leader</div>
+                </div>
+            </div>
+            <div class="level-section">
+                <div class="level-display">
+                    <div class="level-number">15</div>
+                    <div class="xp-info">
+                        <div style="font-size: 14px; font-weight: 600;">2,450 / 3,600 XP</div>
+                        <div style="font-size: 12px; opacity: 0.8;">1,150 XP to next level</div>
+                    </div>
+                </div>
+                <div class="xp-bar">
+                    <div class="xp-fill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i data-lucide="users"></i></div>
+                <div class="stat-label">Social</div>
+                <div class="stat-value">85</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-lucide="brain"></i></div>
+                <div class="stat-label">Academic</div>
+                <div class="stat-value">92</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-lucide="crown"></i></div>
+                <div class="stat-label">Leadership</div>
+                <div class="stat-value">78</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i data-lucide="palette"></i></div>
+                <div class="stat-label">Creative</div>
+                <div class="stat-value">96</div>
+            </div>
+        </div>
+
+        <div class="activities-section">
+            <div class="section-title">
+                <i data-lucide="calendar-days"></i> Today's Activities
+            </div>
+            <div class="activity-card">
+                <div class="activity-header">
+                    <div class="activity-time">09:00</div>
+                    <div class="activity-xp">+250 XP</div>
+                </div>
+                <div class="activity-title">Rapat Tim Marketing</div>
+                <div class="activity-location">
+                    <i data-lucide="map-pin" style="width: 12px; height: 12px; display: inline;"></i> Ruang Rapat A
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="activity-header">
+                    <div class="activity-time">13:30</div>
+                    <div class="activity-xp">+180 XP</div>
+                </div>
+                <div class="activity-title">Workshop Design Thinking</div>
+                <div class="activity-location">
+                    <i data-lucide="map-pin" style="width: 12px; height: 12px; display: inline;"></i> Lab Komputer 2
+                </div>
+            </div>
+            <div class="activity-card">
+                <div class="activity-header">
+                    <div class="activity-time">16:00</div>
+                    <div class="activity-xp">+120 XP</div>
+                </div>
+                <div class="activity-title">Hangout with Squad</div>
+                <div class="activity-location">
+                    <i data-lucide="map-pin" style="width: 12px; height: 12px; display: inline;"></i> Cafeteria
+                </div>
+            </div>
+        </div>
+
+        <div class="daily-missions">
+            <div class="section-title">
+                <i data-lucide="target"></i> Daily Missions
+            </div>
+            <div class="mission-item">
+                <span>Attend 2 classes</span>
+                <span class="mission-progress">2/2 <i data-lucide="check-circle" style="width: 14px; height: 14px; color: #00b894; display: inline;"></i></span>
+            </div>
+            <div class="mission-item">
+                <span>Help 1 friend</span>
+                <span class="mission-progress">1/1 <i data-lucide="check-circle" style="width: 14px; height: 14px; color: #00b894; display: inline;"></i></span>
+            </div>
+            <div class="mission-item">
+                <span>Join 1 UKM activity</span>
+                <span class="mission-progress">0/1 <i data-lucide="clock" style="width: 14px; height: 14px; color: #fdcb6e; display: inline;"></i></span>
+            </div>
+            <div class="mission-item">
+                <span>Scan 3 QR codes</span>
+                <span class="mission-progress">2/3 <i data-lucide="clock" style="width: 14px; height: 14px; color: #fdcb6e; display: inline;"></i></span>
+            </div>
+        </div>
+
+        <div class="social-skills">
+            <div class="section-title">
+                <i data-lucide="shield-check"></i> Social Skills Unlocked
+            </div>
+            <div class="skill-item">
+                <div class="skill-header">
+                    <div class="skill-name">
+                        <i data-lucide="message-circle" style="width: 16px; height: 16px; display: inline; margin-right: 8px; color: #764ba2;"></i>
+                        Si Paling Diskusi
+                    </div>
+                    <div class="skill-level">Lv. 8</div>
+                </div>
+            </div>
+            <div class="skill-item">
+                <div class="skill-header">
+                    <div class="skill-name">
+                        <i data-lucide="presentation" style="width: 16px; height: 16px; display: inline; margin-right: 8px; color: #764ba2;"></i>
+                        Master Presenter
+                    </div>
+                    <div class="skill-level">Lv. 6</div>
+                </div>
+            </div>
+            <div class="skill-item">
+                <div class="skill-header">
+                    <div class="skill-name">
+                        <i data-lucide="handshake" style="width: 16px; height: 16px; display: inline; margin-right: 8px; color: #764ba2;"></i>
+                        Team Player Pro
+                    </div>
+                    <div class="skill-level">Lv. 9</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FRIENDS SECTION -->
+        <div id="friends-section" class="main-section" style="display: none;">
+            <div class="activities-section">
+                <div class="section-title">
+                    <i data-lucide="users"></i> Campus Squad
+                </div>
+                <div class="activity-card">
+                    <div class="avatar-section" style="margin-bottom: 8px;">
+                        <div class="avatar" style="width: 50px; height: 50px; font-size: 20px;">
+                            <i data-lucide="user"></i>
+                        </div>
+                        <div class="player-info" style="flex: 1;">
+                            <h3 style="font-size: 16px; margin-bottom: 2px;">Andi Pratama</h3>
+                            <div style="font-size: 12px; opacity: 0.7;">Level 12 • The Strategist</div>
+                            <div style="font-size: 12px; color: #00b894;">Online 🟢</div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button style="background: linear-gradient(45deg, #4ecdc4, #44a08d); border: none; padding: 6px 12px; border-radius: 12px; color: white; font-size: 12px; cursor: pointer;">Chat</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="activity-card">
+                    <div class="avatar-section" style="margin-bottom: 8px;">
+                        <div class="avatar" style="width: 50px; height: 50px; font-size: 20px;">
+                            <i data-lucide="user"></i>
+                        </div>
+                        <div class="player-info" style="flex: 1;">
+                            <h3 style="font-size: 16px; margin-bottom: 2px;">Sari Dewi</h3>
+                            <div style="font-size: 12px; opacity: 0.7;">Level 18 • The Academic</div>
+                            <div style="font-size: 12px; color: #fdcb6e;">Away 🟡</div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button style="background: linear-gradient(45deg, #4ecdc4, #44a08d); border: none; padding: 6px 12px; border-radius: 12px; color: white; font-size: 12px; cursor: pointer;">Chat</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="activity-card">
+                    <div class="avatar-section" style="margin-bottom: 8px;">
+                        <div class="avatar" style="width: 50px; height: 50px; font-size: 20px;">
+                            <i data-lucide="user"></i>
+                        </div>
+                        <div class="player-info" style="flex: 1;">
+                            <h3 style="font-size: 16px; margin-bottom: 2px;">Rio Saputra</h3>
+                            <div style="font-size: 12px; opacity: 0.7;">Level 14 • The Innovator</div>
+                            <div style="font-size: 12px; color: #636e72;">Offline ⚫</div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button style="background: linear-gradient(45deg, #4ecdc4, #44a08d); border: none; padding: 6px 12px; border-radius: 12px; color: white; font-size: 12px; cursor: pointer;">Chat</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="daily-missions">
+                <div class="section-title">
+                    <i data-lucide="trophy"></i> Squad Leaderboard
+                </div>
+                <div class="mission-item">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="background: #ffd700; color: #2d3436; padding: 4px 8px; border-radius: 50%; font-weight: 700; font-size: 12px;">1</div>
+                        <span>Sari Dewi</span>
+                    </div>
+                    <span style="color: #764ba2; font-weight: 600;">4,250 XP</span>
+                </div>
+                <div class="mission-item">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="background: #c0c0c0; color: #2d3436; padding: 4px 8px; border-radius: 50%; font-weight: 700; font-size: 12px;">2</div>
+                        <span>Kiraitsu M. (You)</span>
+                    </div>
+                    <span style="color: #764ba2; font-weight: 600;">2,450 XP</span>
+                </div>
+                <div class="mission-item">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="background: #cd7f32; color: white; padding: 4px 8px; border-radius: 50%; font-weight: 700; font-size: 12px;">3</div>
+                        <span>Rio Saputra</span>
+                    </div>
+                    <span style="color: #764ba2; font-weight: 600;">2,100 XP</span>
+                </div>
+            </div>
+
+            <div class="social-skills">
+                <div class="section-title">
+                    <i data-lucide="users-round"></i> Friend Requests
+                </div>
+                <div class="skill-item">
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="avatar" style="width: 40px; height: 40px; font-size: 16px;">
+                                <i data-lucide="user"></i>
+                            </div>
+                            <div>
+                                <div style="font-weight: 600; font-size: 14px;">Maya Indira</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Level 11 • Mutual: 3 friends</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button style="background: #00b894; border: none; padding: 4px 8px; border-radius: 8px; color: white; font-size: 11px; cursor: pointer;">Accept</button>
+                            <button style="background: #ddd; border: none; padding: 4px 8px; border-radius: 8px; color: #636e72; font-size: 11px; cursor: pointer;">Decline</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="height: 120px;"></div>
+
+        <button class="floating-btn" onclick="showQRScanner()">
+            <i data-lucide="qr-code"></i>
+            <div class="notification-dot"></div>
+        </button>
+
+        <div id="navbar-placeholder"></div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Sections tab
+        const sections = {
+            home: document.getElementById("home-section"),
+            friends: document.getElementById("friends-section"),
+            stats: document.getElementById("stats-section"),
+            quest: document.getElementById("quest-section"),
+            profile: document.getElementById("profile-section")
+        };
+
+        // Navigation functionality
+    document.querySelectorAll('.nav-item').forEach((item, index) => {
+        item.addEventListener('click', function () {
+            // Set active class
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            this.classList.add('active');
+
+            // Tampilkan section berdasarkan urutan nav-item
+            const keys = Object.keys(sections);
+            keys.forEach((key, i) => {
+                sections[key].style.display = (i === index) ? 'block' : 'none';
+            });
+        });
+    });
+
+        // QR Scanner simulation
+        function showQRScanner() {
+            alert('🔍 QR Scanner activated!\n\nScan QR codes at campus events to earn XP and unlock achievements!');
+        }
+
+        // Activity cards hover effect
+        document.querySelectorAll('.activity-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const xp = this.querySelector('.activity-xp').textContent;
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                    showXPNotification(xp);
+                }, 150);
+            });
+        });
+
+        function showXPNotification(xp) {
+            const notification = document.createElement('div');
+            notification.innerHTML = `✨ ${xp} earned!`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: linear-gradient(45deg, #4ecdc4, #44a08d);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 25px;
+                font-weight: 600;
+                z-index: 1000;
+                animation: popIn 0.5s ease-out;
+            `;
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes popIn {
+                    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+                    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                }
+            `;
+            document.head.appendChild(style);
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+                style.remove();
+            }, 2000);
+        }
+
+        // Auto-update time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('id-ID', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            // Update any time displays if needed
+        }
+
+        setInterval(updateTime, 1000);
+
+        //Navbar
+        fetch("Navbar.html")
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById("navbar-placeholder").innerHTML = data;
+            lucide.createIcons(); // untuk refresh icon lucide
+        });
+
+        // Simulate level up
+        setTimeout(() => {
+            if (Math.random() > 0.7) {
+                const levelUpNotification = document.createElement('div');
+                levelUpNotification.innerHTML = `
+                    <div style="text-align: center;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">🎉</div>
+                        <div style="font-weight: 700; margin-bottom: 4px;">LEVEL UP!</div>
+                        <div style="font-size: 14px;">You reached Level 16!</div>
+                        <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">New skills unlocked!</div>
+                    </div>
+                `;
+                levelUpNotification.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    padding: 20px;
+                    border-radius: 20px;
+                    box-shadow: 0 20px 40px rgba(116, 75, 162, 0.3);
+                    z-index: 1000;
+                    animation: levelUpAnim 1s ease-out;
+                `;
+                
+                const levelUpStyle = document.createElement('style');
+                levelUpStyle.textContent = `
+                    @keyframes levelUpAnim {
+                        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(-10deg); }
+                        50% { transform: translate(-50%, -50%) scale(1.1) rotate(5deg); }
+                        100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+                    }
+                `;
+                document.head.appendChild(levelUpStyle);
+                document.body.appendChild(levelUpNotification);
+                
+                setTimeout(() => {
+                    levelUpNotification.remove();
+                    levelUpStyle.remove();
+                }, 3000);
+            }
+        }, 5000);
+    </script>
+</body>
+</html>

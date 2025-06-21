@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Persona - Friends</title>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            color: #2d3436;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 390px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(116, 75, 162, 0.1);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: #ffffff;
+            border-radius: 24px 24px 0 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2d3436;
+        }
+
+        .section-title svg {
+            width: 20px;
+            height: 20px;
+            color: #764ba2;
+        }
+
+        /* Friend Cards */
+        .friends-section {
+            margin: 20px;
+        }
+
+        .friend-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(116, 75, 162, 0.08);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .friend-card:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 25px rgba(116, 75, 162, 0.15);
+            border-color: #764ba2;
+        }
+
+        .friend-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border: 3px solid rgba(116, 75, 162, 0.1);
+        }
+
+        .friend-info {
+            flex: 1;
+        }
+
+        .friend-name {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .friend-level {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 4px;
+        }
+
+        .friend-status {
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-online { color: #00b894; }
+        .status-away { color: #fdcb6e; }
+        .status-offline { color: #636e72; }
+
+        .friend-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            border: none;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: #636e72;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Search Bar */
+        .search-container {
+            margin: 20px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 45px;
+            border: 1px solid rgba(116, 75, 162, 0.2);
+            border-radius: 16px;
+            font-size: 14px;
+            background: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(116, 75, 162, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #764ba2;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            margin: 20px;
+            display: flex;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 4px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: #764ba2;
+            color: white;
+        }
+
+        /* Recommendations */
+        .recommendation-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .recommendation-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .recommendation-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .recommendation-tag {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        /* Leaderboard */
+        .leaderboard-section {
+            margin: 20px;
+        }
+
+        .leaderboard-item {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 10px rgba(116, 75, 162, 0.06);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .rank-badge {
+            padding: 8px 12px;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 12px;
+            min-width: 36px;
+            text-align: center;
+        }
+
+        .rank-1 { background: #ffd700; color: #2d3436; }
+        .rank-2 { background: #c0c0c0; color: #2d3436; }
+        .rank-3 { background: #cd7f32; color: white; }
+        .rank-other { background: #764ba2; color: white; }
+
+        .leaderboard-info {
+            flex: 1;
+        }
+
+        .leaderboard-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .leaderboard-level {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .leaderboard-xp {
+            color: #764ba2;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Floating Button */
+        .floating-btn {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 25px rgba(116, 75, 162, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+        }
+
+        .floating-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(116, 75, 162, 0.4);
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 390px;
+            background: #ffffff;
+            border-radius: 24px 24px 0 0;
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            box-shadow: 0 -5px 20px rgba(116, 75, 162, 0.1);
+            padding: 16px;
+        }
+
+        .nav-items {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(116, 75, 162, 0.1);
+            transform: translateY(-2px);
+            color: #764ba2;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        .nav-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .nav-label {
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .match-percentage {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
+        .friend-requests {
+            margin: 20px;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 12px;
+            height: 12px;
+            background: #ff4757;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="color: #764ba2; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i data-lucide="users"></i> Campus Friends
+            </h1>
+            <p style="opacity: 0.7; font-size: 14px; margin-top: 4px; color: #636e72;">Connect with your campus community</p>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="search-container">
+            <div class="search-icon">
+                <i data-lucide="search"></i>
+            </div>
+            <input type="text" class="search-input" placeholder="Search friends by name or level...">
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <div class="tab active" data-tab="friends">My Friends</div>
+            <div class="tab" data-tab="recommendations">Recommended</div>
+            <div class="tab" data-tab="requests">Requests</div>
+            <div class="tab" data-tab="leaderboard">Ranking</div>
+        </div>
+
+        <!-- Friends Section -->
+        <div id="friends-tab" class="friends-section">
+            <div class="section-title">
+                <i data-lucide="users-round"></i> Campus Squad (15)
+            </div>
+            
+            <div class="friend-card">
+                <div class="friend-header">
+                    <div class="avatar">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <div class="friend-info">
+                        <div class="friend-name">Andi Pratama</div>
+                        <div class="friend-level">Level 12 • The Strategist</div>
+                        <div class="friend-status status-online">
+                            <span>🟢</span> Online now
+                        </div>
+                    </div>
+                    <div class="friend-actions">
+                        <button class="btn btn-primary">Chat</button>
+                        <button class="btn btn-secondary">View</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="friend-card">
+                <div class="friend-header">
+                    <div class="avatar">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <div class="friend-info">
+                        <div class="friend-name">Sari Dewi</div>
+                        <div class="friend-level">Level 18 • The Academic</div>
+                        <div class="friend-status status-away">
+                            <span>🟡</span> Away - Last seen 2h ago
+                        </div>
+                    </div>
+                    <div class="friend-actions">
+                        <button class="btn btn-primary">Chat</button>
+                        <button class="btn btn-secondary">View</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="friend-card">
+                <div class="friend-header">
+                    <div class="avatar">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <div class="friend-info">
+                        <div class="friend-name">Rio Saputra</div>
+                        <div class="friend-level">Level 14 • The Innovator</div>
+                        <div class="friend-status status-online">
+                            <span>🟢</span> Online - In Library
+                        </div>
+                    </div>
+                    <div class="friend-actions">
+                        <button class="btn btn-primary">Chat</button>
+                        <button class="btn btn-secondary">View</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="friend-card">
+                <div class="friend-header">
+                    <div class="avatar">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <div class="friend-info">
+                        <div class="friend-name">Dina Marlina</div>
+                        <div class="friend-level">Level 13 • The Collaborator</div>
+                        <div class="friend-status status-offline">
+                            <span>⚫</span> Offline - Last seen yesterday
+                        </div>
+                    </div>
+                    <div class="friend-actions">
+                        <button class="btn btn-primary">Chat</button>
+                        <button class="btn btn-secondary">View</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommendations Section -->
+        <div id="recommendations-tab" class="friends-section" style="display: none;">
+            <div class="section-title">
+                <i data-lucide="sparkles"></i> Recommended For You
+            </div>
+            
+            <div class="recommendation-card">
+                <div class="recommendation-tag">🎯 Perfect Match</div>
+                <div class="recommendation-header">
+                    <div class="avatar">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <div class="friend-info">
+                        <div class="friend-name">Maya Indira</div>
+                        <div class="friend-level">Level 15 • The Creative Leader</div>
+                        <div style="font-size: 12px; opacity: 0.9; margin-top: 4px;">
+                            <span class="match-percentage">94% Match</span>
+                            Similar interests in design & leadership
+                        </div>
+                    </div>
+                    <div class="friend-actions">
+                        <button class="btn" style="background: rgba(255,255,255,0.3); color: white;">Add Friend</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="friend-card">
+                <div class="friend-header">
+                    <div class="avatar">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <div class="friend-info">
+                        <div class="friend-name">Budi Santoso</div>
+                        <div class="friend-level">Level 16 • The Mentor</div>
+                        <div style="font-size: 12px; opacity: 0.7;">
+                            <span style="color: #4ecdc4; font-weight: 600;">87% Match</span> • 3 mutual friends
+                        </div>
+                    </div>
+                    <div class="friend-actions">
+                        <button class="btn btn-primary">Add Friend</button>
+                        <button class="btn btn-secondary">View</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="friend-card">
+                <div class="friend-header">
+                    <div class="avatar">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <div class="friend-info">
+                        <div class="friend-name">Lisa Permata</div>
+                        <div class="friend-level">Level 14 • The Artist</div>
+                        <div style="font-size: 12px; opacity: 0.7;">
+                            <span style="color: #4ecdc4; font-weight: 600;">82% Match</span> • Same major, similar creative stats
+                        </div>
+                    </div>
+                    <div class="friend-actions">
+                        <button class="btn btn-primary">Add Friend</button>
+                        <button class="btn btn-secondary">View</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="friend-card">
+                <div class="friend-header">
+                    <div class="avatar">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <div class="friend-info">
+                        <div class="friend-name">Fajar Nugroho</div>
+                        <div class="friend-level">Level 13 • The Tech Enthusiast</div>
+                        <div style="font-size: 12px; opacity: 0.7;">
+                            <span style="color: #4ecdc4; font-weight: 600;">78% Match</span> • Active in same UKM
+                        </div>
+                    </div>
+                    <div class="friend-actions">
+                        <button class="btn btn-primary">Add Friend</button>
+                        <button class="btn btn-secondary">View</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Friend Requests Section -->
+        <div id="requests-tab" class="friend-requests" style="display: none;">
+            <div class="section-title">
+                <i data-lucide="user-plus"></i> Friend Requests (2)
+            </div>
+            
+            <div class="friend-card">
+                <div class="friend-header">
+                    <div class="avatar">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <div class="friend-info">
+                        <div class="friend-name">Ricky Hakim</div>
+                        <div class="friend-level">Level 11 • The Explorer</div>
+                        <div style="font-size: 12px; opacity: 0.7;">2 mutual friends • Sent yesterday</div>
+                    </div>
+                    <div class="friend-actions">
+                        <button class="btn" style="background: #00b894; color: white;">Accept</button>
+                        <button class="btn btn-secondary">Decline</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="friend-card">
+                <div class="friend-header">
+                    <div class="avatar">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <div class="friend-info">
+                        <div class="friend-name">Tika Sari</div>
+                        <div class="friend-level">Level 17 • The Achiever</div>
+                        <div style="font-size: 12px; opacity: 0.7;">1 mutual friend • Sent 3 days ago</div>
+                    </div>
+                    <div class="friend-actions">
+                        <button class="btn" style="background: #00b894; color: white;">Accept</button>
+                        <button class="btn btn-secondary">Decline</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Section -->
+        <div id="leaderboard-tab" class="leaderboard-section" style="display: none;">
+            <div class="section-title">
+                <i data-lucide="trophy"></i> Campus Leaderboard
+            </div>
+            
+            <div class="leaderboard-item">
+                <div class="rank-badge rank-1">1</div>
+                <div class="leaderboard-info">
+                    <div class="leaderboard-name">Sari Dewi</div>
+                    <div class="leaderboard-level">Level 18 • The Academic</div>
+                </div>
+                <div class="leaderboard-xp">4,250 XP</div>
+            </div>
+
+            <div class="leaderboard-item" style="background: linear-gradient(135deg, rgba(116, 75, 162, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%); border-color: #764ba2;">
+                <div class="rank-badge rank-2">2</div>
+                <div class="leaderboard-info">
+                    <div class="leaderboard-name">Kiraitsu M. (You)</div>
+                    <div class="leaderboard-level">Level 15 • The Creative Leader</div>
+                </div>
+                <div class="leaderboard-xp">2,450 XP</div>
+            </div>
+
+            <div class="leaderboard-item">
+                <div class="rank-badge rank-3">3</div>
+                <div class="leaderboard-info">
+                    <div class="leaderboard-name">Rio Saputra</div>
+                    <div class="leaderboard-level">Level 14 • The Innovator</div>
+                </div>
+                <div class="leaderboard-xp">2,100 XP</div>
+            </div>
+
+            <div class="leaderboard-item">
+                <div class="rank-badge rank-other">4</div>
+                <div class="leaderboard-info">
+                    <div class="leaderboard-name">Andi Pratama</div>
+                    <div class="leaderboard-level">Level 12 • The Strategist</div>
+                </div>
+                <div class="leaderboard-xp">1,850 XP</div>
+            </div>
+
+            <div class="leaderboard-item">
+                <div class="rank-badge rank-other">5</div>
+                <div class="leaderboard-info">
+                    <div class="leaderboard-name">Maya Indira</div>
+                    <div class="leaderboard-level">Level 15 • The Creative Leader</div>
+                </div>
+                <div class="leaderboard-xp">1,780 XP</div>
+            </div>
+        </div>
+
+        <div style="height: 120px;"></div>
+
+        <button class="floating-btn" onclick="showFriendActions()">
+            <i data-lucide="user-plus"></i>
+            <div class="notification-dot"></div>
+        </button>
+
+        <div id="navbar-placeholder"></div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Tab functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+
+                // Hide all tab contents
+                document.getElementById('friends-tab').style.display = 'none';
+                document.getElementById('recommendations-tab').style.display = 'none';
+                document.getElementById('requests-tab').style.display = 'none';
+                document.getElementById('leaderboard-tab').style.display = 'none';
+
+                // Show selected tab content
+                const tabName = this.getAttribute('data-tab');
+                switch(tabName) {
+                    case 'friends':
+                        document.getElementById('friends-tab').style.display = 'block';
+                        break;
+                    case 'recommendations':
+                        document.getElementById('recommendations-tab').style.display = 'block';
+                        break;
+                    case 'requests':
+                        document.getElementById('requests-tab').style.display = 'block';
+                        break;
+                    case 'leaderboard':
+                        document.getElementById('leaderboard-tab').style.display = 'block';
+                        break;
+                }
+            });
+        });
+
+        // Navigation functionality
+        document.querySelectorAll('.nav-item').forEach((item, index) => {
+            item.addEventListener('click', function () {
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                
+                const labels = ['Home', 'Friends', 'Stats', 'Quest', 'Profile'];
+                if (labels[index] !== 'Friends') {
+                    alert(`Navigating to ${labels[index]}...`);
+                }
+            });
+        });
+
+        //Navbar
+        fetch("Navbar.html")
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById("navbar-placeholder").innerHTML = data;
+            lucide.createIcons(); // untuk refresh icon lucide
+        });
+        
+        // Search functionality
+        document.querySelector('.search-input').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            // In a real app, this would filter the friend list
+            console.log('Searching for:', searchTerm);
+        });
+
+        // Friend actions
+        function showFriendActions() {
+            alert('👥 Friend Actions\n\n• Find friends by QR code\n• Import contacts\n• Invite via link\n• Nearby users');
+        }
+
+        // Chat functionality
+        document.querySelectorAll('.btn-primary').forEach(btn => {
+            if (btn.textContent === 'Chat') {
+                btn.addEventListener('click', function() {
+                    const friendName = this.closest('.friend-card').querySelector('.friend-name').textContent;
+                    alert(`💬 Opening chat with ${friendName}...`);
+                });
+            }
+        });
+
+        // Add friend functionality
+        document.querySelectorAll('.btn-primary').forEach(btn => {
+            if (btn.textContent === 'Add Friend') {
+                btn.addEventListener('click', function() {
+                    const friendName = this.closest('.friend-card').querySelector('.friend-name').textContent;
+                    this.textContent = 'Sent';
+                    this.style.background = '#ddd';
+                    this.style.color = '#636e72';
+                    this.disabled = true;
+                    
+                    // Show notification
+                    const notification = document.createElement('div');
+                    notification.innerHTML = `✨ Friend request sent to ${friendName}!`;
+                    notification.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: linear-gradient(45deg, #4ecdc4, #44a08d);
+                        color: white;
+                        padding: 12px 24px;
+                        border-radius: 25px;
+                        font-weight: 600;
+                        z-index: 1000;
+                        animation: popIn 0.5s ease-out;
+                    `;
+                    
+                    document.body.appendChild(notification);
+                   
+                   setTimeout(() => {
+                       notification.remove();
+                   }, 3000);
+               });
+           }
+       });
+
+       // Accept/Decline friend requests
+       document.querySelectorAll('.btn').forEach(btn => {
+           if (btn.textContent === 'Accept') {
+               btn.addEventListener('click', function() {
+                   const friendName = this.closest('.friend-card').querySelector('.friend-name').textContent;
+                   const friendCard = this.closest('.friend-card');
+                   
+                   // Animation and removal
+                   friendCard.style.transform = 'translateX(100%)';
+                   friendCard.style.opacity = '0';
+                   
+                   setTimeout(() => {
+                       friendCard.remove();
+                       
+                       // Update counter
+                       const requestsTitle = document.querySelector('#requests-tab .section-title');
+                       const currentCount = parseInt(requestsTitle.textContent.match(/\d+/)[0]);
+                       requestsTitle.innerHTML = `<i data-lucide="user-plus"></i> Friend Requests (${currentCount - 1})`;
+                       lucide.createIcons();
+                   }, 300);
+                   
+                   // Show success notification
+                   showNotification(`🎉 ${friendName} added to your friends!`, '#00b894');
+               });
+           }
+           
+           if (btn.textContent === 'Decline') {
+               btn.addEventListener('click', function() {
+                   const friendName = this.closest('.friend-card').querySelector('.friend-name').textContent;
+                   const friendCard = this.closest('.friend-card');
+                   
+                   friendCard.style.transform = 'translateX(-100%)';
+                   friendCard.style.opacity = '0';
+                   
+                   setTimeout(() => {
+                       friendCard.remove();
+                       
+                       // Update counter
+                       const requestsTitle = document.querySelector('#requests-tab .section-title');
+                       const currentCount = parseInt(requestsTitle.textContent.match(/\d+/)[0]);
+                       requestsTitle.innerHTML = `<i data-lucide="user-plus"></i> Friend Requests (${currentCount - 1})`;
+                       lucide.createIcons();
+                   }, 300);
+                   
+                   showNotification(`Request from ${friendName} declined`, '#ff4757');
+               });
+           }
+       });
+
+       // View profile functionality
+       document.querySelectorAll('.btn-secondary').forEach(btn => {
+           if (btn.textContent === 'View') {
+               btn.addEventListener('click', function() {
+                   const friendName = this.closest('.friend-card').querySelector('.friend-name').textContent;
+                   const friendLevel = this.closest('.friend-card').querySelector('.friend-level').textContent;
+                   showProfileModal(friendName, friendLevel);
+               });
+           }
+       });
+
+       // Show notification function
+       function showNotification(message, color = '#4ecdc4') {
+           const notification = document.createElement('div');
+           notification.innerHTML = message;
+           notification.style.cssText = `
+               position: fixed;
+               top: 50%;
+               left: 50%;
+               transform: translate(-50%, -50%);
+               background: ${color};
+               color: white;
+               padding: 12px 24px;
+               border-radius: 25px;
+               font-weight: 600;
+               z-index: 1000;
+               font-size: 14px;
+               box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+               animation: notificationPop 0.5s ease-out;
+           `;
+           
+           document.body.appendChild(notification);
+           
+           setTimeout(() => {
+               notification.style.animation = 'notificationPop 0.3s ease-in reverse';
+               setTimeout(() => notification.remove(), 300);
+           }, 2500);
+       }
+
+       // Show profile modal
+       function showProfileModal(name, level) {
+           const modal = document.createElement('div');
+           modal.innerHTML = `
+               <div style="
+                   position: fixed;
+                   top: 0;
+                   left: 0;
+                   width: 100%;
+                   height: 100%;
+                   background: rgba(0,0,0,0.8);
+                   z-index: 2000;
+                   display: flex;
+                   align-items: center;
+                   justify-content: center;
+                   animation: fadeIn 0.3s ease-out;
+               ">
+                   <div style="
+                       background: white;
+                       padding: 24px;
+                       border-radius: 20px;
+                       width: 90%;
+                       max-width: 350px;
+                       text-align: center;
+                       position: relative;
+                   ">
+                       <div style="
+                           width: 80px;
+                           height: 80px;
+                           border-radius: 50%;
+                           background: linear-gradient(45deg, #ffd700, #ffed4e);
+                           display: flex;
+                           align-items: center;
+                           justify-content: center;
+                           margin: 0 auto 16px;
+                           font-size: 32px;
+                       ">
+                           <i data-lucide="user"></i>
+                       </div>
+                       <h3 style="margin-bottom: 8px; color: #2d3436;">${name}</h3>
+                       <p style="color: #636e72; margin-bottom: 16px;">${level}</p>
+                       <div style="display: flex; gap: 12px; justify-content: center;">
+                           <button onclick="this.closest('div').parentElement.remove()" style="
+                               background: #764ba2;
+                               color: white;
+                               border: none;
+                               padding: 12px 24px;
+                               border-radius: 12px;
+                               font-weight: 600;
+                               cursor: pointer;
+                           ">Message</button>
+                           <button onclick="this.closest('div').parentElement.remove()" style="
+                               background: #e9ecef;
+                               color: #636e72;
+                               border: none;
+                               padding: 12px 24px;
+                               border-radius: 12px;
+                               font-weight: 600;
+                               cursor: pointer;
+                           ">Close</button>
+                       </div>
+                   </div>
+               </div>
+           `;
+           
+           document.body.appendChild(modal);
+           lucide.createIcons();
+           
+           // Close on background click
+           modal.addEventListener('click', function(e) {
+               if (e.target === modal) {
+                   modal.remove();
+               }
+           });
+       }
+
+       // Add CSS animations
+       const style = document.createElement('style');
+       style.textContent = `
+           @keyframes notificationPop {
+               0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+               100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+           }
+           
+           @keyframes fadeIn {
+               0% { opacity: 0; }
+               100% { opacity: 1; }
+           }
+           
+           @keyframes popIn {
+               0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+               100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+           }
+       `;
+       document.head.appendChild(style);
+
+       // Real-time status updates simulation
+       function updateOnlineStatus() {
+           const statusElements = document.querySelectorAll('.friend-status');
+           statusElements.forEach(status => {
+               const randomChance = Math.random();
+               if (randomChance < 0.1) { // 10% chance to change status
+                   const isOnline = status.classList.contains('status-online');
+                   if (isOnline) {
+                       status.classList.remove('status-online');
+                       status.classList.add('status-away');
+                       status.innerHTML = '<span>🟡</span> Away';
+                   } else if (status.classList.contains('status-away')) {
+                       status.classList.remove('status-away');
+                       status.classList.add('status-online');
+                       status.innerHTML = '<span>🟢</span> Online now';
+                   }
+               }
+           });
+       }
+
+       // Update status every 30 seconds
+       setInterval(updateOnlineStatus, 30000);
+
+       // Easter egg - Konami code
+       let konamiCode = [];
+       const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // Up Up Down Down Left Right Left Right B A
+
+       document.addEventListener('keydown', function(e) {
+           konamiCode.push(e.keyCode);
+           if (konamiCode.length > konamiSequence.length) {
+               konamiCode.shift();
+           }
+           
+           if (konamiCode.join('') === konamiSequence.join('')) {
+               showNotification('🎮 Cheat code activated! +1000 XP bonus!', '#ff6b6b');
+               konamiCode = [];
+           }
+       });
+
+       console.log('🎓 Campus Persona Friends System Loaded!');
+       console.log('💡 Try the search, add friends, and check out the leaderboard!');
+   </script>
+</body>
+</html>
