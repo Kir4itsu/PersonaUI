@@ -37,7 +37,6 @@
             background: #ffffff;
             min-height: 100vh;
             position: relative;
-            /* Hapus border-radius dan box-shadow yang menyebabkan masalah */
         }
 
         .header {
@@ -153,6 +152,7 @@
             border-radius: 10px;
             animation: pulse 2s ease-in-out infinite;
             will-change: opacity;
+            transition: width 0.5s ease;
         }
 
         @keyframes pulse {
@@ -291,58 +291,6 @@
             font-weight: 600;
         }
 
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            width: 100%;
-            background: #ffffff;
-            border-top: 1px solid rgba(116, 75, 162, 0.1);
-            box-shadow: 0 -2px 10px rgba(116, 75, 162, 0.1);
-            padding: 12px 16px;
-            z-index: 100;
-        }
-
-        .nav-items {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            max-width: 400px;
-            margin: 0 auto;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 8px;
-            border-radius: 12px;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .nav-item:active, .nav-item.active {
-            background: rgba(116, 75, 162, 0.1);
-            color: #764ba2;
-        }
-
-        .nav-icon {
-            font-size: 20px;
-        }
-
-        .nav-icon svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .nav-label {
-            font-size: 10px;
-            font-weight: 600;
-        }
-
         .floating-btn {
             position: fixed;
             bottom: 80px;
@@ -417,23 +365,22 @@
             color: white;
         }
 
-        /* Padding bottom untuk mencegah konten tertutup navbar */
-        .main-content {
-            padding-bottom: 100px;
-        }
-
-        /* Modal QR */
+        /* QR Modal Styles */
         .qr-modal {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.8);
             z-index: 9999;
+            display: none;
             align-items: center;
             justify-content: center;
+        }
+
+        .qr-modal.show {
+            display: flex;
         }
 
         .qr-modal-content {
@@ -457,6 +404,76 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 12px;
+        }
+
+        #qr-reader {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Test QR Section */
+        .test-qr-section {
+            margin: 20px 16px;
+            padding: 16px;
+            background: #e8f4f8;
+            border-radius: 12px;
+            border: 2px dashed #4ecdc4;
+        }
+
+        .test-qr-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 8px;
+        }
+
+        .test-qr-info {
+            font-size: 12px;
+            color: #636e72;
+            margin-bottom: 12px;
+        }
+
+        .qr-dummy {
+            background: white;
+            padding: 8px;
+            border-radius: 8px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 10px;
+            word-break: break-all;
+            margin-bottom: 8px;
+        }
+
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            z-index: 10000;
+            text-align: center;
+            max-width: 280px;
+            animation: notificationPop 0.5s ease-out;
+        }
+
+        .notification.xp {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+        }
+
+        .notification.level-up {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 20px 40px rgba(116, 75, 162, 0.3);
+        }
+
+        @keyframes notificationPop {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
 
         /* Responsive improvements */
@@ -473,7 +490,8 @@
             
             .activities-section,
             .daily-missions,
-            .social-skills {
+            .social-skills,
+            .test-qr-section {
                 margin: 16px 12px;
             }
             
@@ -481,15 +499,6 @@
                 right: 16px;
                 bottom: 75px;
             }
-        }
-
-        /* Hide sections by default */
-        .main-section {
-            display: none;
-        }
-
-        .main-section.active {
-            display: block;
         }
     </style>
 </head>
@@ -516,10 +525,10 @@
             </div>
             <div class="level-section">
                 <div class="level-display">
-                    <div class="level-number">15</div>
+                    <div class="level-number">1</div>
                     <div class="xp-info">
-                        <div style="font-size: 14px; font-weight: 600;">2,450 / 3,600 XP</div>
-                        <div style="font-size: 12px; opacity: 0.8;">1,150 XP to next level</div>
+                        <div style="font-size: 14px; font-weight: 600;">0 / 1000 XP</div>
+                        <div style="font-size: 12px; opacity: 0.8;">1000 XP to next level</div>
                     </div>
                 </div>
                 <div class="xp-bar">
@@ -548,6 +557,46 @@
                 <div class="stat-icon"><i data-lucide="palette"></i></div>
                 <div class="stat-label">Creative</div>
                 <div class="stat-value">96</div>
+            </div>
+        </div>
+
+        <!-- Test QR Section -->
+        <div class="test-qr-section">
+            <div class="test-qr-title">🧪 Test QR Codes</div>
+            <div class="test-qr-info">Scan QR codes di bawah untuk testing:</div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
+                <div style="text-align: center;">
+                    <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
+                        <canvas id="qr1" width="80" height="80"></canvas>
+                    </div>
+                    <div style="font-size: 10px; color: #636e72;">Event Marketing (+250 XP)</div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
+                        <canvas id="qr2" width="80" height="80"></canvas>
+                    </div>
+                    <div style="font-size: 10px; color: #636e72;">Workshop Design (+400 XP)</div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
+                        <canvas id="qr3" width="80" height="80"></canvas>
+                    </div>
+                    <div style="font-size: 10px; color: #636e72;">Social Gathering (+150 XP)</div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
+                        <canvas id="qr4" width="80" height="80"></canvas>
+                    </div>
+                    <div style="font-size: 10px; color: #636e72;">Level Up Test (+900 XP)</div>
+                </div>
+            </div>
+            
+            <div style="font-size: 11px; color: #636e72; margin-top: 8px; text-align: center;">
+                📱 Tekan tombol QR di bawah untuk mulai scan
             </div>
         </div>
 
@@ -650,253 +699,227 @@
         </button>
 
         <!-- Modal Floating QR Scanner -->
-        <div id="qrModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:999; align-items:center; justify-content:center;">
+        <div id="qrModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; align-items:center; justify-content:center;">
             <div style="background:white; padding:16px; border-radius:16px; position:relative; max-width:90%; width:360px;">
                 <div id="qr-reader" style="width:100%;"></div>
-                <button onclick="closeScanner()" style="position:absolute; top:8px; right:8px; background:red; color:white; border:none; padding:6px 10px; border-radius:8px; cursor:pointer;">✖</button>
+                <button onclick="closeScanner()" style="position:absolute; top:8px; right:8px; background:#ff4757; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:bold;">✖</button>
             </div>
         </div>
-
 
         <div id="navbar-placeholder"></div>
     </div>
 
-    <script>
-        
+    <!-- QR Code Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
 
-        // Konfigurasi XP per level
+    <script>
+        // Generate QR codes for testing
+        function generateTestQRs() {
+            const qrConfigs = [
+                { id: 'qr1', text: 'event_marketing_250' },
+                { id: 'qr2', text: 'event_workshop_400' },
+                { id: 'qr3', text: 'event_social_150' },
+                { id: 'qr4', text: 'event_levelup_900' }
+            ];
+
+            qrConfigs.forEach(config => {
+                const canvas = document.getElementById(config.id);
+                if (canvas) {
+                    QRCode.toCanvas(canvas, config.text, {
+                        width: 80,
+                        height: 80,
+                        margin: 1,
+                        color: {
+                            dark: '#764ba2',
+                            light: '#ffffff'
+                        }
+                    });
+                }
+            });
+        }
+
+        // User data management
+        let userData = {
+            level: 1,
+            xp: 0,
+            scannedEvents: []
+        };
+
         const xpPerLevel = 1000;
 
-        // Ambil dari localStorage atau set default
-        let userData = JSON.parse(localStorage.getItem("personaUser")) || {
-            level: 0,
-            xp: 0
-        };
-
-        // Update UI pertama kali
-        function updateUI() {
-            document.querySelector(".level-number").textContent = userData.level;
-            document.querySelector(".xp-info").innerHTML = `
-            <div style="font-size: 14px; font-weight: 600;">${userData.xp} / ${xpPerLevel} XP</div>
-            <div style="font-size: 12px; opacity: 0.8;">${xpPerLevel - userData.xp} XP to next level</div>
-            `;
-            document.querySelector(".xp-fill").style.width = `${(userData.xp / xpPerLevel) * 100}%`;
-        }
-
-        // Fungsi tambah XP
-        function addXP(amount) {
-            userData.xp += amount;
-            if (userData.xp >= xpPerLevel) {
-            userData.level++;
-            userData.xp -= xpPerLevel;
-            alert("Level Up! 🎉 Sekarang kamu di level " + userData.level);
+        // Load user data
+        function loadUserData() {
+            const saved = localStorage.getItem("personaUser");
+            if (saved) {
+                userData = JSON.parse(saved);
             }
-            saveUserData();
             updateUI();
         }
 
-        let qrScanner;
-
-        function startScanner() {
-        const qrModal = document.getElementById("qrModal");
-        qrModal.style.display = "flex";
-
-        if (!qrScanner) {
-            qrScanner = new Html5Qrcode("qr-reader");
-        }
-
-        qrScanner.start(
-            { facingMode: "environment" },
-            { fps: 10, qrbox: 250 },
-            (decodedText) => {
-            if (decodedText.startsWith("event_")) {
-                qrScanner.stop().then(() => {
-                closeScanner();
-                });
-                if (saveScannedEvent(decodedText)) {
-                alert("✅ QR dipindai: " + decodedText + " (+25 XP)");
-                addXP(25);
-                } else {
-                alert("⚠️ QR ini sudah pernah dipakai!");
-                }
-            }
-            },
-            (error) => {
-            console.log("QR error:", error);
-            }
-        );
-        }
-
-        function closeScanner() {
-        document.getElementById("qrModal").style.display = "none";
-        if (qrScanner) {
-            qrScanner.stop().catch(e => console.log("QR stop error:", e));
-        }
-        }
-
-        function saveScannedEvent(code) {
-            let scanned = JSON.parse(localStorage.getItem("qr_scanned") || "[]");
-            if (!scanned.includes(code)) {
-                scanned.push(code);
-                localStorage.setItem("qr_scanned", JSON.stringify(scanned));
-                return true;
-            }
-            return false;
-        }
-
-        window.onload = () => {
-            updateUI();
-            lucide.createIcons();
-        };
-
-        // Simpan ke localStorage
+        // Save user data
         function saveUserData() {
             localStorage.setItem("personaUser", JSON.stringify(userData));
         }
 
-        // Jalankan saat halaman dibuka
-        updateUI();
-
-        // Initialize Lucide icons
-        lucide.createIcons();
-
-        // Sections tab
-        const sections = {
-            home: document.getElementById("home-section"),
-            friends: document.getElementById("friends-section"),
-            stats: document.getElementById("stats-section"),
-            quest: document.getElementById("quest-section"),
-            profile: document.getElementById("profile-section")
-        };
-
-        // Navigation functionality
-    document.querySelectorAll('.nav-item').forEach((item, index) => {
-        item.addEventListener('click', function () {
-            // Set active class
-            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-            this.classList.add('active');
-
-            // Tampilkan section berdasarkan urutan nav-item
-            const keys = Object.keys(sections);
-            keys.forEach((key, i) => {
-                sections[key].style.display = (i === index) ? 'block' : 'none';
-            });
-        });
-    });
-
-        // QR Scanner simulation
-        function showQRScanner() {
-            alert('🔍 QR Scanner activated!\n\nScan QR codes at campus events to earn XP and unlock achievements!');
-        }
-
-        // Activity cards hover effect
-        document.querySelectorAll('.activity-card').forEach(card => {
-            card.addEventListener('click', function() {
-                const xp = this.querySelector('.activity-xp').textContent;
-                this.style.transform = 'scale(0.98)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                    showXPNotification(xp);
-                }, 150);
-            });
-        });
-
-        function showXPNotification(xp) {
-            const notification = document.createElement('div');
-            notification.innerHTML = `✨ ${xp} earned!`;
-            notification.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: linear-gradient(45deg, #4ecdc4, #44a08d);
-                color: white;
-                padding: 12px 24px;
-                border-radius: 25px;
-                font-weight: 600;
-                z-index: 1000;
-                animation: popIn 0.5s ease-out;
+        // Update UI
+        function updateUI() {
+            document.querySelector(".level-number").textContent = userData.level;
+            
+            const currentLevelXP = userData.xp % xpPerLevel;
+            const xpToNext = xpPerLevel - currentLevelXP;
+            
+            document.querySelector(".xp-info").innerHTML = `
+                <div style="font-size: 14px; font-weight: 600;">${currentLevelXP} / ${xpPerLevel} XP</div>
+                <div style="font-size: 12px; opacity: 0.8;">${xpToNext} XP to next level</div>
             `;
             
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes popIn {
-                    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-                    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-                }
+            const fillPercentage = (currentLevelXP / xpPerLevel) * 100;
+            document.querySelector(".xp-fill").style.width = `${fillPercentage}%`;
+        }
+
+        // Add XP and handle level up
+        function addXP(amount, eventName) {
+            const oldLevel = userData.level;
+            userData.xp += amount;
+            
+            // Calculate new level
+            const newLevel = Math.floor(userData.xp / xpPerLevel) + 1;
+            
+            if (newLevel > oldLevel) {
+                // Level up!
+                userData.level = newLevel;
+                saveUserData();
+                updateUI();
+                showLevelUpNotification(newLevel);
+            } else {
+                // Just XP gain
+                saveUserData();
+                updateUI();
+                showXPNotification(amount, eventName);
+            }
+        }
+
+        // Show XP gain notification
+        function showXPNotification(xp, eventName) {
+            const notification = document.createElement('div');
+            notification.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 24px; margin-bottom: 8px;">✨</div>
+                    <div style="font-weight: 700; margin-bottom: 4px;">Selamat!</div>
+                    <div style="font-size: 14px;">Kamu dapat +${xp} XP</div>
+                    <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">${eventName}</div>
+                </div>
             `;
-            document.head.appendChild(style);
+            notification.className = 'notification xp';
+            
             document.body.appendChild(notification);
             
             setTimeout(() => {
                 notification.remove();
-                style.remove();
-            }, 2000);
+            }, 3000);
         }
 
-        // Auto-update time
-        function updateTime() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('id-ID', { 
-                hour: '2-digit', 
-                minute: '2-digit' 
-            });
-            // Update any time displays if needed
+        // Show level up notification
+        function showLevelUpNotification(level) {
+            const notification = document.createElement('div');
+            notification.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 32px; margin-bottom: 12px;">🎉</div>
+                    <div style="font-weight: 700; font-size: 18px; margin-bottom: 8px;">LEVEL UP!</div>
+                    <div style="font-size: 16px; margin-bottom: 4px;">Sekarang kamu di level ${level}!</div>
+                    <div style="font-size: 12px; opacity: 0.8;">Skill baru telah terbuka!</div>
+                </div>
+            `;
+            notification.className = 'notification level-up';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
         }
 
-        setInterval(updateTime, 1000);
+        // QR Scanner functionality
+        let qrScanner;
 
-        //Navbar
-        fetch("Navbar.html")
-        .then(res => res.text())
-        .then(data => {
-            document.getElementById("navbar-placeholder").innerHTML = data;
-            lucide.createIcons(); // untuk refresh icon lucide
-        });
+        function startScanner() {
+            const qrModal = document.getElementById("qrModal");
+            qrModal.style.display = "flex";
 
-        // Simulate level up
-        setTimeout(() => {
-            if (Math.random() > 0.7) {
-                const levelUpNotification = document.createElement('div');
-                levelUpNotification.innerHTML = `
-                    <div style="text-align: center;">
-                        <div style="font-size: 24px; margin-bottom: 8px;">🎉</div>
-                        <div style="font-weight: 700; margin-bottom: 4px;">LEVEL UP!</div>
-                        <div style="font-size: 14px;">You reached Level 16!</div>
-                        <div style="font-size: 12px; opacity: 0.8; margin-top: 4px;">New skills unlocked!</div>
-                    </div>
-                `;
-                levelUpNotification.style.cssText = `
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-                    color: white;
-                    padding: 20px;
-                    border-radius: 20px;
-                    box-shadow: 0 20px 40px rgba(116, 75, 162, 0.3);
-                    z-index: 1000;
-                    animation: levelUpAnim 1s ease-out;
-                `;
-                
-                const levelUpStyle = document.createElement('style');
-                levelUpStyle.textContent = `
-                    @keyframes levelUpAnim {
-                        0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(-10deg); }
-                        50% { transform: translate(-50%, -50%) scale(1.1) rotate(5deg); }
-                        100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
-                    }
-                `;
-                document.head.appendChild(levelUpStyle);
-                document.body.appendChild(levelUpNotification);
-                
-                setTimeout(() => {
-                    levelUpNotification.remove();
-                    levelUpStyle.remove();
-                }, 3000);
+            if (!qrScanner) {
+                qrScanner = new Html5Qrcode("qr-reader");
             }
-        }, 5000);
+
+            qrScanner.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: 250 },
+                (decodedText) => {
+                    // Stop scanner first
+                    qrScanner.stop().then(() => {
+                        closeScanner();
+                        handleQRScan(decodedText);
+                    });
+                },
+                (error) => {
+                    // Silent error handling
+                }
+            );
+        }
+
+        function closeScanner() {
+            document.getElementById("qrModal").style.display = "none";
+            if (qrScanner) {
+                qrScanner.stop().catch(e => {});
+            }
+        }
+
+        function handleQRScan(qrText) {
+            // Check if already scanned
+            if (userData.scannedEvents.includes(qrText)) {
+                alert("⚠️ QR code ini sudah pernah di-scan!");
+                return;
+            }
+
+            // Parse QR code
+            const eventXP = {
+                'event_marketing_250': { xp: 250, name: 'Event Marketing' },
+                'event_workshop_400': { xp: 400, name: 'Workshop Design' },
+                'event_social_150': { xp: 150, name: 'Social Gathering' },
+                'event_levelup_900': { xp: 900, name: 'Level Up Test' }
+            };
+
+            if (eventXP[qrText]) {
+                // Add to scanned events
+                userData.scannedEvents.push(qrText);
+                
+                // Add XP
+                const event = eventXP[qrText];
+                addXP(event.xp, event.name);
+                
+            } else {
+                alert("❌ QR code tidak valid!");
+            }
+        }
+
+        // Initialize app
+        window.onload = () => {
+            loadUserData();
+            generateTestQRs();
+            lucide.createIcons();
+        };
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Activity cards interaction
+        document.querySelectorAll('.activity-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
     </script>
 </body>
 </html>
