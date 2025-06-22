@@ -562,43 +562,50 @@
 
         <!-- Test QR Section -->
         <div class="test-qr-section">
-            <div class="test-qr-title">🧪 Test QR Codes</div>
-            <div class="test-qr-info">Scan QR codes di bawah untuk testing:</div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
-                <div style="text-align: center;">
-                    <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
-                        <canvas id="qr1" width="80" height="80"></canvas>
-                    </div>
-                    <div style="font-size: 10px; color: #636e72;">Event Marketing (+250 XP)</div>
-                </div>
-                
-                <div style="text-align: center;">
-                    <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
-                        <canvas id="qr2" width="80" height="80"></canvas>
-                    </div>
-                    <div style="font-size: 10px; color: #636e72;">Workshop Design (+400 XP)</div>
-                </div>
-                
-                <div style="text-align: center;">
-                    <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
-                        <canvas id="qr3" width="80" height="80"></canvas>
-                    </div>
-                    <div style="font-size: 10px; color: #636e72;">Social Gathering (+150 XP)</div>
-                </div>
-                
-                <div style="text-align: center;">
-                    <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
-                        <canvas id="qr4" width="80" height="80"></canvas>
-                    </div>
-                    <div style="font-size: 10px; color: #636e72;">Level Up Test (+900 XP)</div>
-                </div>
+    <div class="test-qr-title">🧪 Test QR Codes</div>
+    <div class="test-qr-info">Scan QR codes di bawah untuk testing:</div>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
+        <div style="text-align: center;">
+            <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
+                <canvas id="qr1" width="80" height="80" style="border: 1px solid #ddd;"></canvas>
             </div>
-            
-            <div style="font-size: 11px; color: #636e72; margin-top: 8px; text-align: center;">
-                📱 Tekan tombol QR di bawah untuk mulai scan
-            </div>
+            <div style="font-size: 10px; color: #636e72;">Event Marketing (+250 XP)</div>
         </div>
+        
+        <div style="text-align: center;">
+            <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
+                <canvas id="qr2" width="80" height="80" style="border: 1px solid #ddd;"></canvas>
+            </div>
+            <div style="font-size: 10px; color: #636e72;">Workshop Design (+400 XP)</div>
+        </div>
+        
+        <div style="text-align: center;">
+            <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
+                <canvas id="qr3" width="80" height="80" style="border: 1px solid #ddd;"></canvas>
+            </div>
+            <div style="font-size: 10px; color: #636e72;">Social Gathering (+150 XP)</div>
+        </div>
+        
+        <div style="text-align: center;">
+            <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
+                <canvas id="qr4" width="80" height="80" style="border: 1px solid #ddd;"></canvas>
+            </div>
+            <div style="font-size: 10px; color: #636e72;">Level Up Test (+900 XP)</div>
+        </div>
+    </div>
+    
+    <div style="font-size: 11px; color: #636e72; margin-top: 8px; text-align: center;">
+        📱 Tekan tombol QR di bawah untuk mulai scan
+    </div>
+    
+    <!-- Debug button untuk testing -->
+    <div style="margin-top: 12px; text-align: center;">
+        <button onclick="generateTestQRs()" style="background: #4ecdc4; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12px;">
+            🔄 Reload QR Codes
+        </button>
+    </div>
+</div>
 
         <div class="activities-section">
             <div class="section-title">
