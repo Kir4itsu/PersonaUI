@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campus Persona</title>
     <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
         * {
@@ -413,39 +414,6 @@
             overflow: hidden;
         }
 
-        /* Test QR Section */
-        .test-qr-section {
-            margin: 20px 16px;
-            padding: 16px;
-            background: #e8f4f8;
-            border-radius: 12px;
-            border: 2px dashed #4ecdc4;
-        }
-
-        .test-qr-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: #2d3436;
-            margin-bottom: 8px;
-        }
-
-        .test-qr-info {
-            font-size: 12px;
-            color: #636e72;
-            margin-bottom: 12px;
-        }
-
-        .qr-dummy {
-            background: white;
-            padding: 8px;
-            border-radius: 8px;
-            text-align: center;
-            font-family: monospace;
-            font-size: 10px;
-            word-break: break-all;
-            margin-bottom: 8px;
-        }
-
         /* Notification Styles */
         .notification {
             position: fixed;
@@ -490,8 +458,7 @@
             
             .activities-section,
             .daily-missions,
-            .social-skills,
-            .test-qr-section {
+            .social-skills{
                 margin: 16px 12px;
             }
             
@@ -559,54 +526,7 @@
                 <div class="stat-value">96</div>
             </div>
         </div>
-
-        <!-- Test QR Section -->
-        <div class="test-qr-section">
-    <div class="test-qr-title">🧪 Test QR Codes</div>
-    <div class="test-qr-info">Scan QR codes di bawah untuk testing:</div>
-    
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px;">
-        <div style="text-align: center;">
-            <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
-                <canvas id="qr1" width="80" height="80" style="border: 1px solid #ddd;"></canvas>
-            </div>
-            <div style="font-size: 10px; color: #636e72;">Event Marketing (+250 XP)</div>
-        </div>
-        
-        <div style="text-align: center;">
-            <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
-                <canvas id="qr2" width="80" height="80" style="border: 1px solid #ddd;"></canvas>
-            </div>
-            <div style="font-size: 10px; color: #636e72;">Workshop Design (+400 XP)</div>
-        </div>
-        
-        <div style="text-align: center;">
-            <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
-                <canvas id="qr3" width="80" height="80" style="border: 1px solid #ddd;"></canvas>
-            </div>
-            <div style="font-size: 10px; color: #636e72;">Social Gathering (+150 XP)</div>
-        </div>
-        
-        <div style="text-align: center;">
-            <div style="background: white; padding: 8px; border-radius: 8px; margin-bottom: 4px;">
-                <canvas id="qr4" width="80" height="80" style="border: 1px solid #ddd;"></canvas>
-            </div>
-            <div style="font-size: 10px; color: #636e72;">Level Up Test (+900 XP)</div>
-        </div>
-    </div>
-    
-    <div style="font-size: 11px; color: #636e72; margin-top: 8px; text-align: center;">
-        📱 Tekan tombol QR di bawah untuk mulai scan
-    </div>
-    
-    <!-- Debug button untuk testing -->
-    <div style="margin-top: 12px; text-align: center;">
-        <button onclick="generateTestQRs()" style="background: #4ecdc4; color: white; border: none; padding: 8px 16px; border-radius: 8px; font-size: 12px;">
-            🔄 Reload QR Codes
-        </button>
-    </div>
-</div>
-
+   
         <div class="activities-section">
             <div class="section-title">
                 <i data-lucide="calendar-days"></i> Today's Activities
@@ -716,34 +636,7 @@
         <div id="navbar-placeholder"></div>
     </div>
 
-    <!-- QR Code Generator Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
-
     <script>
-        // Generate QR codes for testing
-        function generateTestQRs() {
-            const qrConfigs = [
-                { id: 'qr1', text: 'event_marketing_250' },
-                { id: 'qr2', text: 'event_workshop_400' },
-                { id: 'qr3', text: 'event_social_150' },
-                { id: 'qr4', text: 'event_levelup_900' }
-            ];
-
-            qrConfigs.forEach(config => {
-                const canvas = document.getElementById(config.id);
-                if (canvas) {
-                    QRCode.toCanvas(canvas, config.text, {
-                        width: 80,
-                        height: 80,
-                        margin: 1,
-                        color: {
-                            dark: '#764ba2',
-                            light: '#ffffff'
-                        }
-                    });
-                }
-            });
-        }
 
         // User data management
         let userData = {
@@ -928,17 +821,6 @@
             document.getElementById("navbar-placeholder").innerHTML = data;
             lucide.createIcons(); // untuk refresh icon lucide
         });
-
-         // Initialize app
-        window.onload = () => {
-            loadUserData();
-            lucide.createIcons();
-            
-            // Generate QR codes after a small delay to ensure QRCode library is loaded
-            setTimeout(() => {
-                generateTestQRs();
-            }, 100);
-        };
 
         // Initialize Lucide icons
         lucide.createIcons();
