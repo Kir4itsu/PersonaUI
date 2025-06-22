@@ -665,8 +665,13 @@
             <div class="notification-dot"></div>
         </button>
 
-            <!-- Tempat menampilkan kamera QR -->
-    <div id="qr-reader" style="width: 300px; margin: 20px auto; display: none;"></div>
+        <!-- Modal Floating QR Scanner -->
+        <div id="qrModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:999; align-items:center; justify-content:center;">
+            <div style="background:white; padding:16px; border-radius:16px; position:relative; max-width:90%; width:360px;">
+                <div id="qr-reader" style="width:100%;"></div>
+                <button onclick="closeScanner()" style="position:absolute; top:8px; right:8px; background:red; color:white; border:none; padding:6px 10px; border-radius:8px; cursor:pointer;">✖</button>
+            </div>
+        </div>
 
 
         <div id="navbar-placeholder"></div>
@@ -707,32 +712,42 @@
         }
 
         let qrScanner;
+
         function startScanner() {
-            const qrReaderElement = document.getElementById("qr-reader");
-            qrReaderElement.style.display = "block";
+        const qrModal = document.getElementById("qrModal");
+        qrModal.style.display = "flex";
 
-            if (!qrScanner) {
-                qrScanner = new Html5Qrcode("qr-reader");
+        if (!qrScanner) {
+            qrScanner = new Html5Qrcode("qr-reader");
+        }
+
+        qrScanner.start(
+            { facingMode: "environment" },
+            { fps: 10, qrbox: 250 },
+            (decodedText) => {
+            if (decodedText.startsWith("event_")) {
+                qrScanner.stop().then(() => {
+                closeScanner();
+                });
+                if (saveScannedEvent(decodedText)) {
+                alert("✅ QR dipindai: " + decodedText + " (+25 XP)");
+                addXP(25);
+                } else {
+                alert("⚠️ QR ini sudah pernah dipakai!");
+                }
             }
+            },
+            (error) => {
+            console.log("QR error:", error);
+            }
+        );
+        }
 
-            qrScanner.start(
-                { facingMode: "environment" },
-                { fps: 10, qrbox: 250 },
-                (decodedText) => {
-                    if (decodedText.startsWith("event_")) {
-                        qrScanner.stop().then(() => {
-                            qrReaderElement.style.display = "none";
-                        });
-                        if (saveScannedEvent(decodedText)) {
-                            alert("✅ QR dipindai: " + decodedText + " (+25 XP)");
-                            addXP(25);
-                        } else {
-                            alert("⚠️ QR ini sudah pernah dipakai!");
-                        }
-                    }
-                },
-                (error) => console.log("QR error:", error)
-            );
+        function closeScanner() {
+        document.getElementById("qrModal").style.display = "none";
+        if (qrScanner) {
+            qrScanner.stop().catch(e => console.log("QR stop error:", e));
+        }
         }
 
         function saveScannedEvent(code) {
