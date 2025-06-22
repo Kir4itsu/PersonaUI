@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Campus Persona</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <style>
         * {
@@ -659,15 +660,104 @@
 
         <div style="height: 120px;"></div>
 
-        <button class="floating-btn" onclick="showQRScanner()">
+        <button class="floating-btn" onclick="startScanner()">
             <i data-lucide="qr-code"></i>
             <div class="notification-dot"></div>
         </button>
+
+            <!-- Tempat menampilkan kamera QR -->
+    <div id="qr-reader" style="width: 300px; margin: 20px auto; display: none;"></div>
+
 
         <div id="navbar-placeholder"></div>
     </div>
 
     <script>
+        
+
+        // Konfigurasi XP per level
+        const xpPerLevel = 1000;
+
+        // Ambil dari localStorage atau set default
+        let userData = JSON.parse(localStorage.getItem("personaUser")) || {
+            level: 0,
+            xp: 0
+        };
+
+        // Update UI pertama kali
+        function updateUI() {
+            document.querySelector(".level-number").textContent = userData.level;
+            document.querySelector(".xp-info").innerHTML = `
+            <div style="font-size: 14px; font-weight: 600;">${userData.xp} / ${xpPerLevel} XP</div>
+            <div style="font-size: 12px; opacity: 0.8;">${xpPerLevel - userData.xp} XP to next level</div>
+            `;
+            document.querySelector(".xp-fill").style.width = `${(userData.xp / xpPerLevel) * 100}%`;
+        }
+
+        // Fungsi tambah XP
+        function addXP(amount) {
+            userData.xp += amount;
+            if (userData.xp >= xpPerLevel) {
+            userData.level++;
+            userData.xp -= xpPerLevel;
+            alert("Level Up! 🎉 Sekarang kamu di level " + userData.level);
+            }
+            saveUserData();
+            updateUI();
+        }
+
+        let qrScanner;
+        function startScanner() {
+            const qrReaderElement = document.getElementById("qr-reader");
+            qrReaderElement.style.display = "block";
+
+            if (!qrScanner) {
+                qrScanner = new Html5Qrcode("qr-reader");
+            }
+
+            qrScanner.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: 250 },
+                (decodedText) => {
+                    if (decodedText.startsWith("event_")) {
+                        qrScanner.stop().then(() => {
+                            qrReaderElement.style.display = "none";
+                        });
+                        if (saveScannedEvent(decodedText)) {
+                            alert("✅ QR dipindai: " + decodedText + " (+25 XP)");
+                            addXP(25);
+                        } else {
+                            alert("⚠️ QR ini sudah pernah dipakai!");
+                        }
+                    }
+                },
+                (error) => console.log("QR error:", error)
+            );
+        }
+
+        function saveScannedEvent(code) {
+            let scanned = JSON.parse(localStorage.getItem("qr_scanned") || "[]");
+            if (!scanned.includes(code)) {
+                scanned.push(code);
+                localStorage.setItem("qr_scanned", JSON.stringify(scanned));
+                return true;
+            }
+            return false;
+        }
+
+        window.onload = () => {
+            updateUI();
+            lucide.createIcons();
+        };
+
+        // Simpan ke localStorage
+        function saveUserData() {
+            localStorage.setItem("personaUser", JSON.stringify(userData));
+        }
+
+        // Jalankan saat halaman dibuka
+        updateUI();
+
         // Initialize Lucide icons
         lucide.createIcons();
 
