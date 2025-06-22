@@ -901,6 +901,27 @@
             }
         }
 
+        // Navigation functionality
+        document.querySelectorAll('.nav-item').forEach((item, index) => {
+            item.addEventListener('click', function () {
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
+                
+                const labels = ['Home', 'Friends', 'Stats', 'Quest', 'Profile'];
+                if (labels[index] !== 'Friends') {
+                    alert(`Navigating to ${labels[index]}...`);
+                }
+            });
+        });
+
+        //Navbar
+        fetch("Navbar.html")
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById("navbar-placeholder").innerHTML = data;
+            lucide.createIcons(); // untuk refresh icon lucide
+        });
+
          // Initialize app
         window.onload = () => {
             loadUserData();
