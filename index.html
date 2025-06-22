@@ -901,11 +901,23 @@
             }
         }
 
-        // Initialize app
+        //Navbar
+        fetch("Navbar.html")
+        .then(res => res.text())
+        .then(data => {
+            document.getElementById("navbar-placeholder").innerHTML = data;
+            lucide.createIcons(); // untuk refresh icon lucide
+        });
+
+         // Initialize app
         window.onload = () => {
             loadUserData();
-            generateTestQRs();
             lucide.createIcons();
+            
+            // Generate QR codes after a small delay to ensure QRCode library is loaded
+            setTimeout(() => {
+                generateTestQRs();
+            }, 100);
         };
 
         // Initialize Lucide icons
