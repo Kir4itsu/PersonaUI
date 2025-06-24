@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>QR Code Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body style="font-family: sans-serif; text-align: center; padding: 50px;">
+  <h2>QR Code Generator</h2>
+  <select id="qrText">
+    <option value="class_attended">Attend Class</option>
+    <option value="help_friend">Help Friend</option>
+    <option value="ukm_activity">UKM Activity</option>
+    <option value="marketing_meeting">Rapat Tim Marketing</option>
+    <option value="design_workshop">Workshop Design Thinking</option>
+    <option value="hangout">Hangout with Squad</option>
+    <option value="class_attended">Kelas Dihadiri</option>
+    <option value="ukm_activity">Aktivitas UKM</option>
+  </select>
+  <br><br>
+  <button onclick="generateQR()">Buat QR</button>
+  <div id="qrcode" style="margin-top: 30px;"></div>
+
+  <script>
+    function generateQR() {
+      const qrDiv = document.getElementById("qrcode");
+      qrDiv.innerHTML = "";
+      const text = document.getElementById("qrText").value;
+      new QRCode(qrDiv, {
+        text: text,
+        width: 200,
+        height: 200,
+      });
+    }
+  </script>
+</body>
+</html>
