@@ -7,7 +7,471 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8f9fa;
+            color: #2d3436;
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+            background: #ffffff;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: #ffffff;
+            border-bottom: 1px solid #e9ecef;
+            width: 100%;
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 24px;
+            margin: 20px 16px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(116, 75, 162, 0.15);
+            color: white;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            will-change: transform;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .avatar-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+        }
+
+        .player-info h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .player-type {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .level-section {
+            position: relative;
+            z-index: 2;
+        }
+
+        .level-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .level-number {
+            font-size: 48px;
+            font-weight: 900;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .xp-info {
+            text-align: right;
+        }
+
+        .xp-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .xp-fill {
+            width: 68%;
+            height: 100%;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            border-radius: 10px;
+            animation: pulse 2s ease-in-out infinite;
+            will-change: opacity;
+            transition: width 0.5s ease;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 20px 16px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(116, 75, 162, 0.08);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .stat-card:active {
+            transform: translateY(-2px);
+        }
+
+        .stat-icon {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #764ba2;
+        }
+
+        .stat-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .activities-section {
+            margin: 20px 16px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #2d3436;
+        }
+
+        .section-title svg {
+            width: 20px;
+            height: 20px;
+            color: #764ba2;
+        }
+
+        .activity-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 10px rgba(116, 75, 162, 0.08);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+            transition: transform 0.2s ease;
+        }
+
+        .activity-card:active {
+            transform: translateX(4px);
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .activity-time {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .activity-xp {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .activity-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .activity-location {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .daily-missions {
+            margin: 20px 16px;
+        }
+
+        .mission-item {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(116, 75, 162, 0.06);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+        }
+
+        .mission-progress {
+            font-size: 12px;
+            color: #4ecdc4;
+            font-weight: 600;
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(116, 75, 162, 0.3);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            color: white;
+            z-index: 99;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .floating-btn:active {
+            transform: scale(0.95);
+        }
+
+        .floating-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 12px;
+            height: 12px;
+            background: #ff4757;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        .social-skills {
+            margin: 20px 16px;
+        }
+
+        .skill-item {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 10px rgba(116, 75, 162, 0.06);
+            border: 1px solid rgba(116, 75, 162, 0.1);
+        }
+
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .skill-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .skill-level {
+            background: linear-gradient(45deg, #a55eea, #8e44ad);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            color: white;
+        }
+
+        /* QR Modal Styles */
+        .qr-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-modal.show {
+            display: flex;
+        }
+
+        .qr-modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            position: relative;
+            max-width: 90%;
+            width: 320px;
+            margin: 0 16px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        #qr-reader {
+            width: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Notification Styles */
+        .notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border-radius: 16px;
+            color: white;
+            font-weight: 600;
+            z-index: 10000;
+            text-align: center;
+            max-width: 280px;
+            animation: notificationPop 0.5s ease-out;
+        }
+
+        .notification.xp {
+            background: linear-gradient(45deg, #4ecdc4, #44a08d);
+        }
+
+        .notification.level-up {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 20px 40px rgba(116, 75, 162, 0.3);
+        }
+
+        .notification.error {
+            background: linear-gradient(45deg, #ff6b6b, #ff4757);
+        }
+
+        @keyframes notificationPop {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        }
+
+        /* Responsive improvements */
+        @media screen and (max-width: 390px) {
+            .profile-card {
+                margin: 16px 12px;
+                padding: 20px;
+            }
+            
+            .stats-grid {
+                margin: 16px 12px;
+                gap: 10px;
+            }
+            
+            .activities-section,
+            .daily-missions,
+            .social-skills{
+                margin: 16px 12px;
+            }
+            
+            .floating-btn {
+                right: 16px;
+                bottom: 75px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
