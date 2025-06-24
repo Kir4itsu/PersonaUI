@@ -439,6 +439,10 @@
             box-shadow: 0 20px 40px rgba(116, 75, 162, 0.3);
         }
 
+        .notification.error {
+            background: linear-gradient(45deg, #ff6b6b, #ff4757);
+        }
+
         @keyframes notificationPop {
             0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
             100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -579,9 +583,9 @@
                 <span>Join 1 UKM activity</span>
                 <span class="mission-progress">0/1 <i data-lucide="clock" style="width: 14px; height: 14px; color: #fdcb6e; display: inline;"></i></span>
             </div>
-            <div class="mission-item">
+            <div class="mission-item" id="qr-mission">
                 <span>Scan 3 QR codes</span>
-                <span class="mission-progress">2/3 <i data-lucide="clock" style="width: 14px; height: 14px; color: #fdcb6e; display: inline;"></i></span>
+                <span class="mission-progress">0/3 <i data-lucide="clock" style="width: 14px; height: 14px; color: #fdcb6e; display: inline;"></i></span>
             </div>
         </div>
 
@@ -626,10 +630,10 @@
         </button>
 
         <!-- Modal Floating QR Scanner -->
-        <div id="qrModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; align-items:center; justify-content:center;">
-            <div style="background:white; padding:16px; border-radius:16px; position:relative; max-width:90%; width:360px;">
-                <div id="qr-reader" style="width:100%;"></div>
-                <button onclick="closeScanner()" style="position:absolute; top:8px; right:8px; background:#ff4757; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:bold;">✖</button>
+        <div id="qrModal" class="qr-modal">
+            <div class="qr-modal-content">
+                <button class="close-btn" onclick="closeScanner()">✖</button>
+                <div id="qr-reader"></div>
             </div>
         </div>
 
@@ -637,7 +641,6 @@
     </div>
 
     <script>
-
         // User data management
         let userData = {
             level: 1,
@@ -646,14 +649,24 @@
         };
 
         const xpPerLevel = 1000;
+        let qrScanner;
 
         // Load user data
         function loadUserData() {
             const saved = localStorage.getItem("personaUser");
             if (saved) {
                 userData = JSON.parse(saved);
+            } else {
+                // Default data
+                userData = {
+                    level: 1,
+                    xp: 0,
+                    scannedEvents: []
+                };
+                saveUserData();
             }
             updateUI();
+            updateMissionProgress();
         }
 
         // Save user data
@@ -675,6 +688,24 @@
             
             const fillPercentage = (currentLevelXP / xpPerLevel) * 100;
             document.querySelector(".xp-fill").style.width = `${fillPercentage}%`;
+        }
+
+        // Update mission progress
+        function updateMissionProgress() {
+            const scanCount = userData.scannedEvents.length;
+            const missionElement = document.getElementById('qr-mission');
+            
+            if (missionElement) {
+                missionElement.innerHTML = `
+                    <span>Scan 3 QR codes</span>
+                    <span class="mission-progress">${scanCount}/3 
+                        ${scanCount >= 3 ? 
+                            '<i data-lucide="check-circle" style="width:14px;height:14px;color:#00b894;display:inline;"></i>' :
+                            '<i data-lucide="clock" style="width:14px;height:14px;color:#fdcb6e;display:inline;"></i>'}
+                    </span>
+                `;
+                lucide.createIcons();
+            }
         }
 
         // Add XP and handle level up
@@ -739,12 +770,27 @@
             }, 4000);
         }
 
-        // QR Scanner functionality
-        let qrScanner;
+        // Show error notification
+        function showErrorNotification(message) {
+            const notification = document.createElement('div');
+            notification.innerHTML = `
+                <div style="text-align: center;">
+                    <div style="font-size: 24px; margin-bottom: 8px;">⚠️</div>
+                    <div style="font-size: 14px;">${message}</div>
+                </div>
+            `;
+            notification.className = 'notification error';
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
 
+        // QR Scanner functionality
         function startScanner() {
             const qrModal = document.getElementById("qrModal");
-            qrModal.style.display = "flex";
+            qrModal.classList.add("show");
 
             if (!qrScanner) {
                 qrScanner = new Html5Qrcode("qr-reader");
@@ -754,7 +800,6 @@
                 { facingMode: "environment" },
                 { fps: 10, qrbox: 250 },
                 (decodedText) => {
-                    // Stop scanner first
                     qrScanner.stop().then(() => {
                         closeScanner();
                         handleQRScan(decodedText);
@@ -767,37 +812,42 @@
         }
 
         function closeScanner() {
-            document.getElementById("qrModal").style.display = "none";
-            if (qrScanner) {
-                qrScanner.stop().catch(e => {});
+            document.getElementById("qrModal").classList.remove("show");
+            if (qrScanner && qrScanner.isScanning) {
+                qrScanner.stop().catch(e => console.log("Scanner stop error:", e));
             }
         }
 
         function handleQRScan(qrText) {
+            // Mapping event dan XP
+            const eventXP = {
+                'marketing_meeting': { xp: 250, name: 'Rapat Tim Marketing' },
+                'design_workshop': { xp: 180, name: 'Workshop Design Thinking' },
+                'hangout': { xp: 120, name: 'Hangout with Squad' },
+                'class_attended': { xp: 100, name: 'Kelas Dihadiri' },
+                'ukm_activity': { xp: 200, name: 'Aktivitas UKM' }
+            };
+
+            const eventKey = qrText.toLowerCase().replace(/\s+/g, '_');
+            
             // Check if already scanned
-            if (userData.scannedEvents.includes(qrText)) {
-                alert("⚠️ QR code ini sudah pernah di-scan!");
+            if (userData.scannedEvents.includes(eventKey)) {
+                showErrorNotification("QR sudah discan sebelumnya!");
                 return;
             }
 
-            // Parse QR code
-            const eventXP = {
-                'event_marketing_250': { xp: 250, name: 'Event Marketing' },
-                'event_workshop_400': { xp: 400, name: 'Workshop Design' },
-                'event_social_150': { xp: 150, name: 'Social Gathering' },
-                'event_levelup_900': { xp: 900, name: 'Level Up Test' }
-            };
-
-            if (eventXP[qrText]) {
+            if (eventXP[eventKey]) {
                 // Add to scanned events
-                userData.scannedEvents.push(qrText);
+                userData.scannedEvents.push(eventKey);
+                saveUserData();
+                
+                // Update mission progress
+                updateMissionProgress();
                 
                 // Add XP
-                const event = eventXP[qrText];
-                addXP(event.xp, event.name);
-                
+                addXP(eventXP[eventKey].xp, eventXP[eventKey].name);
             } else {
-                alert("❌ QR code tidak valid!");
+                showErrorNotification("QR tidak valid!");
             }
         }
 
@@ -821,6 +871,12 @@
             document.getElementById("navbar-placeholder").innerHTML = data;
             lucide.createIcons(); // untuk refresh icon lucide
         });
+
+        // Initialize app
+        window.onload = () => {
+            loadUserData();
+            lucide.createIcons();
+        };
 
         // Initialize Lucide icons
         lucide.createIcons();
